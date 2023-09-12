@@ -5,9 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HomeHero_API.Models.Dto
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class RequestDto : ControllerBase
+
+    public class RequestDto 
     {       
         public int RequestID { get; set; }
         [Required]
@@ -19,7 +18,7 @@ namespace HomeHero_API.Models.Dto
         [Required]
         public int ReqStateID_Request { get; set; }
         public int MembersNeeded { get; set; }
-        public byte[] RequestPicture { get; set; }
+        public IFormFile RequestPicture { get; set; }
         public string RequestTitle { get; set; }
     }
 }

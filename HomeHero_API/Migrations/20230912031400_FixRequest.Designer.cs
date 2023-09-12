@@ -4,6 +4,7 @@ using HomeHero_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HomeHero_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230912031400_FixRequest")]
+    partial class FixRequest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -680,22 +683,6 @@ namespace HomeHero_API.Migrations
                     b.HasIndex("RoleID_User");
 
                     b.ToTable("User");
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = 1,
-                            Email = "john.doe@example.com",
-                            LocationResidenceID = 1,
-                            NamesUser = "John",
-                            Password = new byte[] { 1, 2, 3, 4 },
-                            QualificationUser = 5,
-                            RoleID_User = 1,
-                            Salt = new byte[] { 5, 6, 7, 8 },
-                            SexUser = "M",
-                            SurnamesUser = "Doe",
-                            VolunteerPermises = true
-                        });
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Application", b =>

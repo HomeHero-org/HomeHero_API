@@ -185,6 +185,40 @@ namespace HomeHero_API.Data
                 new Location { LocationID = 2, City = "ALBAN" },
                 new Location { LocationID = 3, City = "ANAPOIMA" }
                 );
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    UserId = 1,  // Esto normalmente lo manejaría la base de datos a través de Identity.
+                    RoleID_User = 1, // Este es un valor ficticio.
+
+                    RealUserID = null, // Esta propiedad es nullable.
+                    NamesUser = "John",
+                    SurnamesUser = "Doe",
+                    ProfilePicture = null, // Esta propiedad es nullable.
+                    VolunteerVoucher = null, // Esta propiedad es nullable.
+                    QualificationUser = 5, // Este es un valor ficticio.
+                    Email = "john.doe@example.com",
+                    Password = new byte[] { 0x01, 0x02, 0x03, 0x04 }, // Este es un valor ficticio.
+                    Salt = new byte[] { 0x05, 0x06, 0x07, 0x08 }, // Este es un valor ficticio.
+                    LocationResidenceID = 1, // Este es un valor ficticio.
+
+                    SexUser = 'M',
+                    Curriculum = null, // Esta propiedad es nullable.
+                    VolunteerPermises = true,
+                    Applications = null, // Esta propiedad es nullable.
+
+                    AttentionRequests = null, // Esta propiedad es nullable.
+                    Messages = null, // Esta propiedad es nullable.
+                    UnsatisfiedUsers = null, // Esta propiedad es nullable.
+                    AttenderUsers = null, // Esta propiedad es nullable.
+                    ComplaintedUsers = null, // Esta propiedad es nullable.
+                    Contacts = null, // Esta propiedad es nullable.
+                    Doubts = null, // Esta propiedad es nullable.
+                    Qualifications = null, // Esta propiedad es nullable.
+                    Requests = null, // Esta propiedad es nullable.
+                    Tutorials = null
+                } // Esta propiedad es nullable.}
+                );
         }
     }
 }

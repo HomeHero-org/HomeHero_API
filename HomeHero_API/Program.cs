@@ -18,8 +18,23 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 });
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
-var app = builder.Build();
+//Cors Config
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:3000") // URL de tu aplicación React
+                   .AllowAnyHeader()
+                   .AllowAnyMethod()
+                   .AllowCredentials();
+        });
+});
 
+
+var app = builder.Build();
+app.UseCors("AllowReactApp"); // Esto debe estar antes de UseRouting()
+app.UseRouting();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

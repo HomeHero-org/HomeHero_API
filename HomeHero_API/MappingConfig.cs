@@ -7,10 +7,13 @@ namespace HomeHero_API
     public class MappingConfig : Profile
     {
         public MappingConfig()
-        {        
-            CreateMap<Request, RequestCreateDto>().ReverseMap();
+        {
+
             CreateMap<Request, RequestUpdateDto>().ReverseMap();
-            CreateMap<Request, RequestDto>().ReverseMap();
+            CreateMap<Request, RequestDto>()
+                .ForMember(dest => dest.RequestPicture, opt => opt.Ignore()).ReverseMap();
+            CreateMap<RequestCreateDto, Request>()
+            .ForMember(dest => dest.RequestPicture, act => act.Ignore()).ReverseMap(); // Ignoramos temporalmente esta propiedad
         }
     }
 }

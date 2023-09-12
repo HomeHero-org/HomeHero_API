@@ -87,20 +87,23 @@ namespace HomeHero_API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> CreateRequest([FromBody] RequestCreateDto createDto)
+        public async Task<ActionResult<APIResponse>> CreateRequest([FromForm] RequestCreateDto createDto)
         {
             try
             {
+                
                 if (!ModelState.IsValid) return BadRequest(ModelState);
-                //if (await _requestRepo.Get(v => v.request.ToLower() == createDto.Name.ToLower()) != null)
-                //{
-                //    ModelState.AddModelError("NameExist", "That name already exists");
-                //    return BadRequest(ModelState);
-                //}
+
                 if (createDto == null) return BadRequest(createDto);
                 Request model = _mapper.Map<Request>(createDto);
                 model.CreatedTime = DateTime.Now;
                 model.UpdateTime = DateTime.Now;
+                if (createDto.RequestPicture != null && createDto.RequestPicture.Length > 0)
+                {
+                    using var memoryStream = new MemoryStream();
+                    await createDto.RequestPicture.CopyToAsync(memoryStream);
+                    model.RequestPicture = memoryStream.ToArray();
+                }
                 await _requestRepo.Create(model);
                 _response.Result = model;
                 _response.statusCode = HttpStatusCode.Created;
