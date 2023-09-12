@@ -183,7 +183,8 @@ namespace HomeHero_API.Data
             modelBuilder.Entity<Location>().HasData(
                 new Location { LocationID = 1, City = "AGUA DE DIOS" },
                 new Location { LocationID = 2, City = "ALBAN" },
-                new Location { LocationID = 3, City = "ANAPOIMA" }
+                new Location { LocationID = 3, City = "ANAPOIMA" },
+                new Location { LocationID = 4, City = "MOSQUERA" }
                 );
             modelBuilder.Entity<User>().HasData(
                 new User
