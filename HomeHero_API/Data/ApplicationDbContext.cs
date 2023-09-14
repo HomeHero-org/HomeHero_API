@@ -97,10 +97,11 @@ namespace HomeHero_API.Data
                .WithMany(uc => uc.Applications)
                .HasForeignKey(cu => cu.RequestID_Application)
                .OnDelete(DeleteBehavior.NoAction);
+
             modelBuilder.Entity<Application>()
                .HasOne(cu => cu.User_Application)
                .WithMany(uc => uc.Applications)
-               .HasForeignKey(cu => cu.RequestID_Application)
+               .HasForeignKey(cu => cu.UserID_Application)
                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<AttentionRequest>()
@@ -181,10 +182,10 @@ namespace HomeHero_API.Data
                 }
                 );
             modelBuilder.Entity<Location>().HasData(
-                new Location { LocationID = 1, City = "AGUA DE DIOS" },
-                new Location { LocationID = 2, City = "ALBAN" },
-                new Location { LocationID = 3, City = "ANAPOIMA" },
-                new Location { LocationID = 4, City = "MOSQUERA" }
+                new Location { LocationID = 1, City = "Facatativa" },
+                new Location { LocationID = 2, City = "San Juan" },
+                new Location { LocationID = 3, City = "Bogota" },
+                new Location { LocationID = 4, City = "Madrid" }
                 );
             modelBuilder.Entity<User>().HasData(
                 new User
@@ -218,7 +219,40 @@ namespace HomeHero_API.Data
                     Qualifications = null, // Esta propiedad es nullable.
                     Requests = null, // Esta propiedad es nullable.
                     Tutorials = null
-                } // Esta propiedad es nullable.}
+                }, // Esta propiedad es nullable
+                  // 
+                  new User
+                  {
+                      UserId =2,  // Esto normalmente lo manejaría la base de datos a través de Identity.
+                      RoleID_User = 1, // Este es un valor ficticio.
+
+                      RealUserID = null, // Esta propiedad es nullable.
+                      NamesUser = "John",
+                      SurnamesUser = "Doe",
+                      ProfilePicture = null, // Esta propiedad es nullable.
+                      VolunteerVoucher = null, // Esta propiedad es nullable.
+                      QualificationUser = 5, // Este es un valor ficticio.
+                      Email = "john.doe@example.com",
+                      Password = new byte[] { 0x01, 0x02, 0x03, 0x04 }, // Este es un valor ficticio.
+                      Salt = new byte[] { 0x05, 0x06, 0x07, 0x08 }, // Este es un valor ficticio.
+                      LocationResidenceID = 1, // Este es un valor ficticio.
+
+                      SexUser = 'M',
+                      Curriculum = null, // Esta propiedad es nullable.
+                      VolunteerPermises = true,
+                      Applications = null, // Esta propiedad es nullable.
+
+                      AttentionRequests = null, // Esta propiedad es nullable.
+                      Messages = null, // Esta propiedad es nullable.
+                      UnsatisfiedUsers = null, // Esta propiedad es nullable.
+                      AttenderUsers = null, // Esta propiedad es nullable.
+                      ComplaintedUsers = null, // Esta propiedad es nullable.
+                      Contacts = null, // Esta propiedad es nullable.
+                      Doubts = null, // Esta propiedad es nullable.
+                      Qualifications = null, // Esta propiedad es nullable.
+                      Requests = null, // Esta propiedad es nullable.
+                      Tutorials = null
+                  } // Esta propiedad es nullable.}
                 );
         }
     }

@@ -19,7 +19,7 @@ namespace HomeHero_API.Models.Dto
         [Required]
         public int ReqStateID_Request { get; set; }
         public int MembersNeeded { get; set; }
-        public IFormFile RequestPicture { get; set; }
+        public string RequestPicture { get; set; }
         public string RequestTitle { get; set; }
     }
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HomeHero_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230912031400_FixRequest")]
-    partial class FixRequest
+    [Migration("20230914051829_m1")]
+    partial class m1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,6 +45,8 @@ namespace HomeHero_API.Migrations
                     b.HasKey("ApplicationID");
 
                     b.HasIndex("RequestID_Application");
+
+                    b.HasIndex("UserID_Application");
 
                     b.ToTable("Application");
                 });
@@ -292,17 +294,22 @@ namespace HomeHero_API.Migrations
                         new
                         {
                             LocationID = 1,
-                            City = "AGUA DE DIOS"
+                            City = "Facatativa"
                         },
                         new
                         {
                             LocationID = 2,
-                            City = "ALBAN"
+                            City = "San Juan"
                         },
                         new
                         {
                             LocationID = 3,
-                            City = "ANAPOIMA"
+                            City = "Bogota"
+                        },
+                        new
+                        {
+                            LocationID = 4,
+                            City = "Madrid"
                         });
                 });
 
@@ -683,6 +690,22 @@ namespace HomeHero_API.Migrations
                     b.HasIndex("RoleID_User");
 
                     b.ToTable("User");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            Email = "john.doe@example.com",
+                            LocationResidenceID = 1,
+                            NamesUser = "John",
+                            Password = new byte[] { 1, 2, 3, 4 },
+                            QualificationUser = 5,
+                            RoleID_User = 1,
+                            Salt = new byte[] { 5, 6, 7, 8 },
+                            SexUser = "M",
+                            SurnamesUser = "Doe",
+                            VolunteerPermises = true
+                        });
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Application", b =>
@@ -695,7 +718,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasOne("HomeHero_API.Models.User", "User_Application")
                         .WithMany("Applications")
-                        .HasForeignKey("RequestID_Application")
+                        .HasForeignKey("UserID_Application")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 

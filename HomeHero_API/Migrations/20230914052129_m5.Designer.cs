@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HomeHero_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230912041443_Fix4")]
-    partial class Fix4
+    [Migration("20230914052129_m5")]
+    partial class m5
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,6 +45,8 @@ namespace HomeHero_API.Migrations
                     b.HasKey("ApplicationID");
 
                     b.HasIndex("RequestID_Application");
+
+                    b.HasIndex("UserID_Application");
 
                     b.ToTable("Application");
                 });
@@ -292,17 +294,22 @@ namespace HomeHero_API.Migrations
                         new
                         {
                             LocationID = 1,
-                            City = "AGUA DE DIOS"
+                            City = "Facatativa"
                         },
                         new
                         {
                             LocationID = 2,
-                            City = "ALBAN"
+                            City = "San Juan"
                         },
                         new
                         {
                             LocationID = 3,
-                            City = "ANAPOIMA"
+                            City = "Bogota"
+                        },
+                        new
+                        {
+                            LocationID = 4,
+                            City = "Madrid"
                         });
                 });
 
@@ -711,7 +718,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasOne("HomeHero_API.Models.User", "User_Application")
                         .WithMany("Applications")
-                        .HasForeignKey("RequestID_Application")
+                        .HasForeignKey("UserID_Application")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 

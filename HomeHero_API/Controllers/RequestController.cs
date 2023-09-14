@@ -91,20 +91,23 @@ namespace HomeHero_API.Controllers
         {
             try
             {
-                
                 if (!ModelState.IsValid) return BadRequest(ModelState);
-
                 if (createDto == null) return BadRequest(createDto);
+
                 Request model = _mapper.Map<Request>(createDto);
                 model.CreatedTime = DateTime.Now;
                 model.UpdateTime = DateTime.Now;
+
                 if (createDto.RequestPicture != null && createDto.RequestPicture.Length > 0)
                 {
                     using var memoryStream = new MemoryStream();
                     await createDto.RequestPicture.CopyToAsync(memoryStream);
-                    model.RequestPicture = memoryStream.ToArray();
+                    var base64Image = Convert.ToBase64String(memoryStream.ToArray()); // Convert the image to Base64
+                    model.RequestPicture = Convert.FromBase64String(base64Image); // Convert back to byte[] for DB storage
                 }
+
                 await _requestRepo.Create(model);
+
                 _response.Result = model;
                 _response.statusCode = HttpStatusCode.Created;
                 return CreatedAtRoute("GetRequest", new { model.RequestID }, _response);
@@ -114,9 +117,10 @@ namespace HomeHero_API.Controllers
                 _response.IsSuccessful = false;
                 _response.ErrorMessages = new List<string>() { ex.ToString() };
             }
-            return _response;
 
+            return _response;
         }
+
 
         [HttpDelete("{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]

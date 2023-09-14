@@ -43,6 +43,8 @@ namespace HomeHero_API.Migrations
 
                     b.HasIndex("RequestID_Application");
 
+                    b.HasIndex("UserID_Application");
+
                     b.ToTable("Application");
                 });
 
@@ -289,22 +291,22 @@ namespace HomeHero_API.Migrations
                         new
                         {
                             LocationID = 1,
-                            City = "AGUA DE DIOS"
+                            City = "Facatativa"
                         },
                         new
                         {
                             LocationID = 2,
-                            City = "ALBAN"
+                            City = "San Juan"
                         },
                         new
                         {
                             LocationID = 3,
-                            City = "ANAPOIMA"
+                            City = "Bogota"
                         },
                         new
                         {
                             LocationID = 4,
-                            City = "MOSQUERA"
+                            City = "Madrid"
                         });
                 });
 
@@ -700,6 +702,20 @@ namespace HomeHero_API.Migrations
                             SexUser = "M",
                             SurnamesUser = "Doe",
                             VolunteerPermises = true
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            Email = "john.doe@example.com",
+                            LocationResidenceID = 1,
+                            NamesUser = "John",
+                            Password = new byte[] { 1, 2, 3, 4 },
+                            QualificationUser = 5,
+                            RoleID_User = 1,
+                            Salt = new byte[] { 5, 6, 7, 8 },
+                            SexUser = "M",
+                            SurnamesUser = "Doe",
+                            VolunteerPermises = true
                         });
                 });
 
@@ -713,7 +729,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasOne("HomeHero_API.Models.User", "User_Application")
                         .WithMany("Applications")
-                        .HasForeignKey("RequestID_Application")
+                        .HasForeignKey("UserID_Application")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 

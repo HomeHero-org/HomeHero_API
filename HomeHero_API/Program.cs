@@ -18,6 +18,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 });
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
+builder.Services.AddScoped<IApplicationRepository, ApplicationRepository>();
+builder.Services.AddTransient<DatabaseInitializer>();
 //Cors Config
 builder.Services.AddCors(options =>
 {
@@ -33,6 +35,13 @@ builder.Services.AddCors(options =>
 
 
 var app = builder.Build();
+//using (var scope = app.Services.CreateScope())
+//{
+//    var services = scope.ServiceProvider;
+//    var initializer = services.GetRequiredService<DatabaseInitializer>();
+//    await initializer.InitializeAsync();
+//}
+
 app.UseCors("AllowReactApp"); // Esto debe estar antes de UseRouting()
 app.UseRouting();
 // Configure the HTTP request pipeline.
