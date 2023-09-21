@@ -11,6 +11,6 @@ namespace HomeHero_API.Repository
         {
             _context = context;
         }
-        
+
     }
 }
