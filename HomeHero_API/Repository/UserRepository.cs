@@ -4,8 +4,12 @@ using HomeHero_API.Models.Dto;
 using HomeHero_API.Repository.IRepository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
+using System.Text;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace HomeHero_API.Repository
@@ -13,9 +17,11 @@ namespace HomeHero_API.Repository
     public class UserRepository : IUserRepository
     {
         private readonly ApplicationDbContext _context;
-        public UserRepository(ApplicationDbContext context)
+        private readonly string _key;
+        public UserRepository(ApplicationDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _key = configuration.GetValue<string>("ApiSettings:SecretKey");
         }
 
         public bool DeleteUser(string email)
@@ -27,11 +33,17 @@ namespace HomeHero_API.Repository
 
         public User GetUser(int id)
         {
-            throw new NotImplementedException();
+            return _context.User
+                .Include(u => u.LocationResidence)
+                .Include(u => u.Role_User)
+                .FirstOrDefault(u => u.UserId == id);
         }
         public User GetUser(string email)
         {
-            throw new NotImplementedException();
+            return _context.User
+                .Include(u => u.LocationResidence)
+                .Include(u => u.Role_User)
+                .FirstOrDefault(u => u.Email.Equals(email));
         }
 
         public ICollection<User> GetUsers()
@@ -46,9 +58,39 @@ namespace HomeHero_API.Repository
             return true;
         }
 
-        public Task<UserLoginResponseDto> Login(UserLoginDto userloginDto)
+        public async Task<UserLoginResponseDto> Login(UserLoginDto userloginDto)
         {
-            throw new NotImplementedException();
+            var user = _context.User.Include(u => u.Role_User).Include(u => u.LocationResidence).FirstOrDefault(
+                u => u.Email.Equals(userloginDto.Email.Trim())
+                );
+            if (user == null || !VerifyPassword(userloginDto.Password, user.Password))
+            {
+                return new UserLoginResponseDto() { Token = "", User = null };
+            }
+
+            var tokenManager = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_key);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                    {
+                new Claim(ClaimTypes.Name, user.Email.ToString()),
+                new Claim(ClaimTypes.Role, user.Role_User.NameRole.ToString())
+                    }
+                ),
+                Expires = DateTime.UtcNow.AddMinutes(1),
+                SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+            };
+
+            var token = tokenManager.CreateToken(tokenDescriptor);
+
+            UserLoginResponseDto userLoginResponseDto = new UserLoginResponseDto()
+            {
+                User = user,
+                Token = tokenManager.WriteToken(token)
+            };
+            return userLoginResponseDto;
         }
 
         public async Task<User> Register(UserRegisterDto userRegisterDto)
@@ -73,11 +115,9 @@ namespace HomeHero_API.Repository
 
         public async Task<User> UpdateUser(UserUpdateDto userUpdateDto)
         {
-            var user = _context.User
-                .Include(u => u.LocationResidence)
-                .Include(u => u.Role_User)
-                .FirstOrDefault(u => u.Email == userUpdateDto.email);
-            if(user == null) {
+            var user = _context.User.FirstOrDefault(u => u.Email == userUpdateDto.email);
+            if (user == null)
+            {
                 return null;
             }
             if (!userUpdateDto.RealUserID.Trim().IsNullOrEmpty())
@@ -114,7 +154,7 @@ namespace HomeHero_API.Repository
                     user.Curriculum = bytesImagen;
                 }
             }
-            if( userUpdateDto.RoleID_User != user.RoleID_User)
+            if (userUpdateDto.RoleID_User != user.RoleID_User)
             {
                 user.RoleID_User = userUpdateDto.RoleID_User;
             }
@@ -123,7 +163,10 @@ namespace HomeHero_API.Repository
                 user.LocationResidenceID = userUpdateDto.LocationResidenceID;
             }
             _context.SaveChanges();
-            return user;
+            return _context.User
+                .Include(u => u.LocationResidence)
+                .Include(u => u.Role_User)
+                .FirstOrDefault(u => u.Email.Equals(user.Email));
 
         }
 
