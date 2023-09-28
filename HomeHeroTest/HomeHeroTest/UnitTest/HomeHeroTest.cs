@@ -1,20 +1,13 @@
-using Xunit;
-using Moq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
-using System.Linq.Expressions;
-using HomeHero_API.Repository.IRepository;
 using HomeHero_API.Data;
-using HomeHero_API.Repository;
-using Microsoft.EntityFrameworkCore;
 using HomeHero_API.Models;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
-using System.Threading;
-using System.Threading.Tasks;
+using HomeHero_API.Repository;
+using HomeHero_API.Repository.IRepository;
+using Microsoft.EntityFrameworkCore;
+using Moq;
+using System.Linq.Expressions;
 
 
-namespace HomeHeroTest
+namespace HomeHeroTest.UnitTest
 {
     public class RepositoryTest
     {
