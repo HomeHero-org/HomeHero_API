@@ -18,10 +18,9 @@ namespace HomeHero_API.Models
         public byte[]? VolunteerVoucher { get; set; }
         public int QualificationUser { get; set; }
         public string Email  { get; set; }
-
-        [Column(TypeName = "varbinary(max)")]
-        public byte[] Password { get; set; }
-        public byte[] Salt { get; set; }
+        [MinLength(8)]
+        [Required]
+        public string Password { get; set; }
         public int LocationResidenceID { get; set; }
         [ForeignKey("LocationResidenceID")]
         public virtual Location LocationResidence { get; set; }

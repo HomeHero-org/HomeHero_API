@@ -19,6 +19,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
 builder.Services.AddScoped<IApplicationRepository, ApplicationRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddTransient<DatabaseInitializer>();
 //Cors Config
 builder.Services.AddCors(options =>

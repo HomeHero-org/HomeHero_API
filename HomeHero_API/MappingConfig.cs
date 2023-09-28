@@ -18,7 +18,7 @@ namespace HomeHero_API
              .ForMember(dest => dest.RequestPicture, opt => opt.MapFrom(src => ConvertFormFileToByteArray(src.RequestPicture)))
              .ReverseMap();
 
-
+            CreateMap<User, UserSumarryDto>();
             CreateMap<Application, ApplicationCreateDto>().ReverseMap();
             CreateMap<Application, ApplicationDto>().ReverseMap();
         }

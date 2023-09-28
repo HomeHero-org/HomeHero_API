@@ -69,7 +69,7 @@ public class DatabaseInitializer
         }
         if (!_context.User.Any())
         {
-            _context.User.AddRange(
+            /*_context.User.AddRange(
                 new User
                 {
                     UserId = 1,  
@@ -100,7 +100,7 @@ public class DatabaseInitializer
                     Tutorials = null
                 }
                
-            );
+            );*/
         }
 
     }
