@@ -145,7 +145,7 @@ namespace HomeHero_API.Controllers
             return Ok(_apiAnswer);
         }
         
-        [HttpPatch("delete/{email}")]
+        [HttpDelete("delete/{email}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

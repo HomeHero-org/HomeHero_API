@@ -21,6 +21,7 @@ namespace HomeHero_API
             CreateMap<User, UserSumarryDto>();
             CreateMap<Application, ApplicationCreateDto>().ReverseMap();
             CreateMap<Application, ApplicationDto>().ReverseMap();
+            CreateMap<Contact,ContactDto>().ReverseMap();
         }
         private byte[] ConvertFormFileToByteArray(IFormFile formFile)
         {
