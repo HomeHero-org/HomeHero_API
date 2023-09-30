@@ -187,7 +187,7 @@ namespace HomeHero_API.Data
                 new Location { LocationID = 3, City = "Bogota" },
                 new Location { LocationID = 4, City = "Madrid" }
                 );
-           /* modelBuilder.Entity<User>().HasData(
+           /*modelBuilder.Entity<User>().HasData(
                 new User
                 {
                     UserId = 1,  // Esto normalmente lo manejaría la base de datos a través de Identity.

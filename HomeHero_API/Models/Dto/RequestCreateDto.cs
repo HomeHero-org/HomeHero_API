@@ -11,7 +11,7 @@ namespace HomeHero_API.Models.Dto
         [Required]
         public int LocationServiceID { get; set; }
         [Required]
-        public int UserId_Request { get; set; } = 1;
+        public int UserId_Request { get; set; } = 3;
         public string RequestContent { get; set; }
         public DateTime PublicationReqDate { get; set; }
         [Required]
