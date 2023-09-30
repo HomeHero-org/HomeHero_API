@@ -1,16 +1,14 @@
 ﻿using HomeHero_API.Data;
 using HomeHero_API.Models;
-using HomeHero_API.Models.Dto;
+using HomeHero_API.Models.Dto.UserDto;
 using HomeHero_API.Repository.IRepository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace HomeHero_API.Repository
 {

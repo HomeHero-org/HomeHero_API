@@ -1,6 +1,11 @@
 ﻿using AutoMapper;
 using HomeHero_API.Models;
-using HomeHero_API.Models.Dto;
+using HomeHero_API.Models.Dto.ApllicationDto;
+using HomeHero_API.Models.Dto.AreaDto;
+using HomeHero_API.Models.Dto.ContactDto;
+using HomeHero_API.Models.Dto.Request_AreaDto;
+using HomeHero_API.Models.Dto.RequestDto;
+using HomeHero_API.Models.Dto.UserDto;
 
 namespace HomeHero_API
 {
@@ -19,9 +24,11 @@ namespace HomeHero_API
              .ReverseMap();
 
             CreateMap<User, UserSumarryDto>();
+            CreateMap<Area, AreaDto>().ReverseMap();
             CreateMap<Application, ApplicationCreateDto>().ReverseMap();
             CreateMap<Application, ApplicationDto>().ReverseMap();
             CreateMap<Contact,ContactDto>().ReverseMap();
+            CreateMap<Request_Area, Request_AreaDto>().ReverseMap();
         }
         private byte[] ConvertFormFileToByteArray(IFormFile formFile)
         {

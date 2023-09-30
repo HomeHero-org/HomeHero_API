@@ -1,6 +1,6 @@
 ﻿using HomeHero_API.Data;
 using HomeHero_API.Models;
-using HomeHero_API.Models.Dto;
+using HomeHero_API.Models.Dto.ContactDto;
 using HomeHero_API.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 

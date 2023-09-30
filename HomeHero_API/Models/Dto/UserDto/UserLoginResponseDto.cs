@@ -1,4 +1,4 @@
-﻿namespace HomeHero_API.Models.Dto
+﻿namespace HomeHero_API.Models.Dto.UserDto
 {
     public class UserLoginResponseDto
     {

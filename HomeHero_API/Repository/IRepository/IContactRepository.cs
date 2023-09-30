@@ -1,5 +1,5 @@
-﻿using HomeHero_API.Models.Dto;
-using HomeHero_API.Models;
+﻿using HomeHero_API.Models;
+using HomeHero_API.Models.Dto.ContactDto;
 
 namespace HomeHero_API.Repository.IRepository
 {

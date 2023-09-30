@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using HomeHero_API.Models;
-using HomeHero_API.Models.Dto;
+using HomeHero_API.Models.Dto.UserDto;
 using HomeHero_API.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

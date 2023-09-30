@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace HomeHero_API.Models.Dto
+namespace HomeHero_API.Models.Dto.UserDto
 {
     public class UserRegisterDto
     {

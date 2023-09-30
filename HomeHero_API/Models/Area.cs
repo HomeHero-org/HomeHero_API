@@ -8,7 +8,7 @@ namespace HomeHero_API.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int AreaID { get; set; }
-        public int NameArea { get; set; }
+        public string NameArea { get; set; }
         public virtual ICollection<Request_Area> Request_Areas { get; set; }
     }
 }
