@@ -16,6 +16,7 @@ namespace HomeHero_API.Data
         public DbSet<Contact> Contact { get; set; }
         public DbSet<Doubt> Doubt { get; set; }
         public DbSet<Location> Location { get; set; }
+        public DbSet<Request_Area> Request_Area { get; set; }
         public DbSet<Message> Message { get; set; }
         public DbSet<PaymentRecord> PaymentRecord { get; set; }
         public DbSet<PayMethod> PayMethod { get; set; }
@@ -57,6 +58,13 @@ namespace HomeHero_API.Data
                 .WithMany(a => a.ComplaintedUsers)
                 .HasForeignKey(q => q.ComplaintedUserID)
                 .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Request>()
+                .HasOne(q => q.AreaOfRequest)
+                .WithMany(a => a.Request_Areas)
+                .HasForeignKey(q => q.AreaID_Request)
+                .OnDelete(DeleteBehavior.NoAction);
+
+
             modelBuilder.Entity<Complaint>()
                .HasOne(q => q.RequestComplaint)
                .WithMany(a => a.ReqComplaints)

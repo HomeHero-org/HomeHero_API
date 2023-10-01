@@ -11,7 +11,7 @@ namespace HomeHero_API.Models.Dto.RequestDto
         [Required]
         public int LocationServiceID { get; set; }
         [Required]
-        public int UserId_Request { get; set; } = 3;
+        public int UserId_Request { get; set; } = 1;
         public string RequestContent { get; set; }
         public DateTime PublicationReqDate { get; set; }
         [Required]
@@ -20,5 +20,7 @@ namespace HomeHero_API.Models.Dto.RequestDto
         public IFormFile RequestPicture { get; set; }
 
         public string RequestTitle { get; set; }
+        [Required]
+        public int AreaID_Request { get; set; } 
     }
 }

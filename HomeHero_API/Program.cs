@@ -51,6 +51,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+//Services to add names instead id
+builder.Services.AddTransient<RequestAreaResolver>();
+builder.Services.AddTransient<RequestLocationResolver>();
+
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 //Adding Repositories
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();

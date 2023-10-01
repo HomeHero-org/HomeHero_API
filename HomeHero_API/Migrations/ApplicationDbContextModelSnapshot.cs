@@ -287,28 +287,6 @@ namespace HomeHero_API.Migrations
                     b.HasKey("LocationID");
 
                     b.ToTable("Location");
-
-                    b.HasData(
-                        new
-                        {
-                            LocationID = 1,
-                            City = "Facatativa"
-                        },
-                        new
-                        {
-                            LocationID = 2,
-                            City = "San Juan"
-                        },
-                        new
-                        {
-                            LocationID = 3,
-                            City = "Bogota"
-                        },
-                        new
-                        {
-                            LocationID = 4,
-                            City = "Madrid"
-                        });
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Message", b =>
@@ -431,6 +409,9 @@ namespace HomeHero_API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RequestID"));
 
+                    b.Property<int>("AreaID_Request")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
@@ -465,6 +446,8 @@ namespace HomeHero_API.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("RequestID");
+
+                    b.HasIndex("AreaID_Request");
 
                     b.HasIndex("LocationServiceID");
 
@@ -513,33 +496,6 @@ namespace HomeHero_API.Migrations
                     b.HasKey("RoleID");
 
                     b.ToTable("Role");
-
-                    b.HasData(
-                        new
-                        {
-                            RoleID = 1,
-                            NameRole = "Admon"
-                        },
-                        new
-                        {
-                            RoleID = 2,
-                            NameRole = "User"
-                        },
-                        new
-                        {
-                            RoleID = 3,
-                            NameRole = "PUser"
-                        },
-                        new
-                        {
-                            RoleID = 4,
-                            NameRole = "Reviewer"
-                        },
-                        new
-                        {
-                            RoleID = 5,
-                            NameRole = "TSupport"
-                        });
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.State", b =>
@@ -557,38 +513,6 @@ namespace HomeHero_API.Migrations
                     b.HasKey("StateID");
 
                     b.ToTable("State");
-
-                    b.HasData(
-                        new
-                        {
-                            StateID = 1,
-                            NameState = "Preparado"
-                        },
-                        new
-                        {
-                            StateID = 2,
-                            NameState = "Progreso"
-                        },
-                        new
-                        {
-                            StateID = 3,
-                            NameState = "Evaluacion"
-                        },
-                        new
-                        {
-                            StateID = 4,
-                            NameState = "Pagado"
-                        },
-                        new
-                        {
-                            StateID = 5,
-                            NameState = "PagoConfirmado"
-                        },
-                        new
-                        {
-                            StateID = 6,
-                            NameState = "Terminado"
-                        });
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Tutorial", b =>
@@ -890,6 +814,12 @@ namespace HomeHero_API.Migrations
 
             modelBuilder.Entity("HomeHero_API.Models.Request", b =>
                 {
+                    b.HasOne("HomeHero_API.Models.Area", "AreaOfRequest")
+                        .WithMany("Request_Areas")
+                        .HasForeignKey("AreaID_Request")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("HomeHero_API.Models.Location", "Location_Request")
                         .WithMany("Requests")
                         .HasForeignKey("LocationServiceID")
@@ -908,6 +838,8 @@ namespace HomeHero_API.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.Navigation("AreaOfRequest");
+
                     b.Navigation("Location_Request");
 
                     b.Navigation("RequestState");
@@ -917,21 +849,21 @@ namespace HomeHero_API.Migrations
 
             modelBuilder.Entity("HomeHero_API.Models.Request_Area", b =>
                 {
-                    b.HasOne("HomeHero_API.Models.Area", "Area_Request_Area")
-                        .WithMany("Request_Areas")
+                    b.HasOne("HomeHero_API.Models.Area", "Area_RA")
+                        .WithMany()
                         .HasForeignKey("AreaID_Request")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HomeHero_API.Models.Request", "Request_Request_Area")
+                    b.HasOne("HomeHero_API.Models.Request", "Request_RA")
                         .WithMany("Request_Areas")
                         .HasForeignKey("RequestID_Request")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Area_Request_Area");
+                    b.Navigation("Area_RA");
 
-                    b.Navigation("Request_Request_Area");
+                    b.Navigation("Request_RA");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Tutorial", b =>

@@ -21,5 +21,7 @@ namespace HomeHero_API.Models.Dto.RequestDto
         public int MembersNeeded { get; set; }
         public string RequestPicture { get; set; }
         public string RequestTitle { get; set; }
+        [Required]
+        public int AreaID_Request { get; set; }
     }
 }

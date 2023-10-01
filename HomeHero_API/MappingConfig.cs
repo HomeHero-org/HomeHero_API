@@ -19,7 +19,8 @@ namespace HomeHero_API
             CreateMap<Request, RequestUpdateDto>().ReverseMap();
             CreateMap<Request, RequestDto>()
             .ForMember(dto => dto.RequestPicture, opt => opt.MapFrom(req => Convert.ToBase64String(req.RequestPicture)))
-            .ForMember(dto => dto.RequestArea, opt => opt.MapFrom(req => _context.Area.FirstOrDefault(a => a.AreaID == req.AreaID_Request).NameArea))
+            .ForMember(dto => dto.RequestArea, opt => opt.MapFrom<RequestAreaResolver>())
+            .ForMember(dto => dto.RequestLocation, opt => opt.MapFrom<RequestLocationResolver>())
             .ReverseMap()
             .ForMember(req => req.RequestPicture, opt => opt.MapFrom(dto => Convert.FromBase64String(dto.RequestPicture)));
             CreateMap<RequestCreateDto, Request>()
@@ -30,7 +31,7 @@ namespace HomeHero_API
             CreateMap<Area, AreaDto>().ReverseMap();
             CreateMap<Application, ApplicationCreateDto>().ReverseMap();
             CreateMap<Application, ApplicationDto>().ReverseMap();
-            CreateMap<Contact,ContactDto>().ReverseMap();
+            CreateMap<Contact, ContactDto>().ReverseMap();
             CreateMap<Request_Area, Request_AreaDto>().ReverseMap();
         }
         private byte[] ConvertFormFileToByteArray(IFormFile formFile)
