@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HomeHero_API.Data;
 using HomeHero_API.Models;
 using HomeHero_API.Models.Dto.ApllicationDto;
 using HomeHero_API.Models.Dto.AreaDto;
@@ -11,12 +12,14 @@ namespace HomeHero_API
 {
     public class MappingConfig : Profile
     {
+        private readonly ApplicationDbContext _context;
         public MappingConfig()
         {
 
             CreateMap<Request, RequestUpdateDto>().ReverseMap();
             CreateMap<Request, RequestDto>()
             .ForMember(dto => dto.RequestPicture, opt => opt.MapFrom(req => Convert.ToBase64String(req.RequestPicture)))
+            .ForMember(dto => dto.RequestArea, opt => opt.MapFrom(req => _context.Area.FirstOrDefault(a => a.AreaID == req.AreaID_Request).NameArea))
             .ReverseMap()
             .ForMember(req => req.RequestPicture, opt => opt.MapFrom(dto => Convert.FromBase64String(dto.RequestPicture)));
             CreateMap<RequestCreateDto, Request>()
