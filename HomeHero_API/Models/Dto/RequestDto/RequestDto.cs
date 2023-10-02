@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HomeHero_API.Models.Dto
+namespace HomeHero_API.Models.Dto.RequestDto
 {
 
-    public class RequestDto 
-    {       
+    public class RequestDto
+    {
         public int RequestID { get; set; }
         [Required]
         public int LocationServiceID { get; set; }
@@ -20,5 +20,8 @@ namespace HomeHero_API.Models.Dto
         public int MembersNeeded { get; set; }
         public string RequestPicture { get; set; }
         public string RequestTitle { get; set; }
+        //Names
+        public string RequestArea { get; set; }
+        public string RequestLocation { get; set; }
     }
 }

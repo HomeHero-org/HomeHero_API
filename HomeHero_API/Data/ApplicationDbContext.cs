@@ -16,13 +16,13 @@ namespace HomeHero_API.Data
         public DbSet<Contact> Contact { get; set; }
         public DbSet<Doubt> Doubt { get; set; }
         public DbSet<Location> Location { get; set; }
+        public DbSet<Request_Area> Request_Area { get; set; }
         public DbSet<Message> Message { get; set; }
         public DbSet<PaymentRecord> PaymentRecord { get; set; }
         public DbSet<PayMethod> PayMethod { get; set; }
         public DbSet<Qualification> Qualification { get; set; }
 
         public DbSet<Request> Request { get; set; }
-        public DbSet<Request_Area> Request_Area { get; set; }
 
         public DbSet<State> State { get; set; }
         public DbSet<Role> Role { get; set; }
@@ -58,6 +58,13 @@ namespace HomeHero_API.Data
                 .WithMany(a => a.ComplaintedUsers)
                 .HasForeignKey(q => q.ComplaintedUserID)
                 .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Request>()
+                .HasOne(q => q.AreaOfRequest)
+                .WithMany(a => a.Request_Areas)
+                .HasForeignKey(q => q.AreaID_Request)
+                .OnDelete(DeleteBehavior.NoAction);
+
+
             modelBuilder.Entity<Complaint>()
                .HasOne(q => q.RequestComplaint)
                .WithMany(a => a.ReqComplaints)
@@ -124,136 +131,7 @@ namespace HomeHero_API.Data
             modelBuilder.Entity<Application>()
                 .Property(a => a.RequestedPrice)
                 .HasColumnType("decimal(18, 2)");
-
-            modelBuilder.Entity<Role>().HasData(
-                new Role
-                {
-                    RoleID = 1,
-                    NameRole = "Admon"
-                },
-                new Role
-                {
-                    RoleID = 2,
-                    NameRole = "User"
-                }, new Role
-                {
-                    RoleID = 3,
-                    NameRole = "PUser"
-                }, new Role
-                {
-                    RoleID = 4,
-                    NameRole = "Reviewer"
-                }, new Role
-                {
-                    RoleID = 5,
-                    NameRole = "TSupport"
-                }
-                );
-            modelBuilder.Entity<State>().HasData(
-                new State
-                {
-                    StateID = 1,
-                    NameState = "Preparado"
-                },
-                new State
-                {
-                    StateID = 2,
-                    NameState = "Progreso"
-                },
-                new State
-                {
-                    StateID = 3,
-                    NameState = "Evaluacion"
-                },
-                new State
-                {
-                    StateID = 4,
-                    NameState = "Pagado"
-                },
-                new State
-                {
-                    StateID = 5,
-                    NameState = "PagoConfirmado"
-                },
-                new State
-                {
-                    StateID = 6,
-                    NameState = "Terminado"
-                }
-                );
-            modelBuilder.Entity<Location>().HasData(
-                new Location { LocationID = 1, City = "Facatativa" },
-                new Location { LocationID = 2, City = "San Juan" },
-                new Location { LocationID = 3, City = "Bogota" },
-                new Location { LocationID = 4, City = "Madrid" }
-                );
-            modelBuilder.Entity<User>().HasData(
-                new User
-                {
-                    UserId = 1,  // Esto normalmente lo manejaría la base de datos a través de Identity.
-                    RoleID_User = 1, // Este es un valor ficticio.
-
-                    RealUserID = null, // Esta propiedad es nullable.
-                    NamesUser = "John",
-                    SurnamesUser = "Doe",
-                    ProfilePicture = null, // Esta propiedad es nullable.
-                    VolunteerVoucher = null, // Esta propiedad es nullable.
-                    QualificationUser = 5, // Este es un valor ficticio.
-                    Email = "john.doe@example.com",
-                    Password = new byte[] { 0x01, 0x02, 0x03, 0x04 }, // Este es un valor ficticio.
-                    Salt = new byte[] { 0x05, 0x06, 0x07, 0x08 }, // Este es un valor ficticio.
-                    LocationResidenceID = 1, // Este es un valor ficticio.
-
-                    SexUser = 'M',
-                    Curriculum = null, // Esta propiedad es nullable.
-                    VolunteerPermises = true,
-                    Applications = null, // Esta propiedad es nullable.
-
-                    AttentionRequests = null, // Esta propiedad es nullable.
-                    Messages = null, // Esta propiedad es nullable.
-                    UnsatisfiedUsers = null, // Esta propiedad es nullable.
-                    AttenderUsers = null, // Esta propiedad es nullable.
-                    ComplaintedUsers = null, // Esta propiedad es nullable.
-                    Contacts = null, // Esta propiedad es nullable.
-                    Doubts = null, // Esta propiedad es nullable.
-                    Qualifications = null, // Esta propiedad es nullable.
-                    Requests = null, // Esta propiedad es nullable.
-                    Tutorials = null
-                }, // Esta propiedad es nullable
-                  // 
-                  new User
-                  {
-                      UserId =2,  // Esto normalmente lo manejaría la base de datos a través de Identity.
-                      RoleID_User = 1, // Este es un valor ficticio.
-
-                      RealUserID = null, // Esta propiedad es nullable.
-                      NamesUser = "John",
-                      SurnamesUser = "Doe",
-                      ProfilePicture = null, // Esta propiedad es nullable.
-                      VolunteerVoucher = null, // Esta propiedad es nullable.
-                      QualificationUser = 5, // Este es un valor ficticio.
-                      Email = "john.doe@example.com",
-                      Password = new byte[] { 0x01, 0x02, 0x03, 0x04 }, // Este es un valor ficticio.
-                      Salt = new byte[] { 0x05, 0x06, 0x07, 0x08 }, // Este es un valor ficticio.
-                      LocationResidenceID = 1, // Este es un valor ficticio.
-
-                      SexUser = 'M',
-                      Curriculum = null, // Esta propiedad es nullable.
-                      VolunteerPermises = true,
-                      Applications = null, // Esta propiedad es nullable.
-
-                      AttentionRequests = null, // Esta propiedad es nullable.
-                      Messages = null, // Esta propiedad es nullable.
-                      UnsatisfiedUsers = null, // Esta propiedad es nullable.
-                      AttenderUsers = null, // Esta propiedad es nullable.
-                      ComplaintedUsers = null, // Esta propiedad es nullable.
-                      Contacts = null, // Esta propiedad es nullable.
-                      Doubts = null, // Esta propiedad es nullable.
-                      Qualifications = null, // Esta propiedad es nullable.
-                      Requests = null, // Esta propiedad es nullable.
-                      Tutorials = null
-                  } // Esta propiedad es nullable.}
-                );
+         
         }
     }
 }

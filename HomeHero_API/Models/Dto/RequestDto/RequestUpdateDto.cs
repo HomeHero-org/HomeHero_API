@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HomeHero_API.Models.Dto
+namespace HomeHero_API.Models.Dto.RequestDto
 {
- 
-    public class RequestUpdateDto 
+
+    public class RequestUpdateDto
     {
         [Required]
         public int RequestID { get; set; }
@@ -21,5 +21,7 @@ namespace HomeHero_API.Models.Dto
         public int MembersNeeded { get; set; }
         public string RequestPicture { get; set; }
         public string RequestTitle { get; set; }
+        [Required]
+        public int AreaID_Request { get; set; }
     }
 }

@@ -10,9 +10,9 @@ namespace HomeHero_API.Models
         public int RequestAreaID { get; set; }       
         public int RequestID_Request { get; set; }
         [ForeignKey("RequestID_Request")]
-        public virtual Request Request_Request_Area { get; set; }
+        public virtual Request Request_RA { get; set; }
         public int AreaID_Request { get; set; }
         [ForeignKey("AreaID_Request")]
-        public virtual Area Area_Request_Area { get; set; }
+        public virtual Area Area_RA { get; set; }
     }
 }

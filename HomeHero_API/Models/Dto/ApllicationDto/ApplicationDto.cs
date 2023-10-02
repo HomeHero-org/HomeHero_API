@@ -3,11 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HomeHero_API.Models.Dto
+namespace HomeHero_API.Models.Dto.ApllicationDto
 {
 
-    public class ApplicationCreateDto
+    public class ApplicationDto
     {
+        public int ApplicationID { get; set; }
         [Required]
         public int UserID_Application { get; set; }
 
