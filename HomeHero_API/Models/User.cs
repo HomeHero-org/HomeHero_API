@@ -31,13 +31,10 @@ namespace HomeHero_API.Models
         public virtual ICollection<Aptitude_User>? Aptitude_Users { get; }
         public virtual ICollection<AttentionRequest>? AttentionRequests { get; set; }
         public virtual ICollection<Message>? Messages { get; set; }
-        //Relations with Complaint Entity
-       
+        //Relations with Complaint Entity       
         public virtual ICollection<Complaint>? UnsatisfiedUsers { get; set; }
         public virtual ICollection<Complaint>? AttenderUsers { get; set; }
-        public virtual ICollection<Complaint>? ComplaintedUsers { get; set; }
-        
-
+        public virtual ICollection<Complaint>? ComplaintedUsers { get; set; }       
         public virtual ICollection<Contact>? Contacts { get; set; }
         public virtual ICollection<Doubt>? Doubts { get; set; }
         public virtual ICollection<Qualification>? Qualifications { get; set; }
