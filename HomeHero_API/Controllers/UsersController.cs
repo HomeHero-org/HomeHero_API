@@ -24,22 +24,21 @@ namespace HomeHero_API.Controllers
             _apiAnswer = new ApiAnswer();
         }
 
-        [Authorize(Roles = "Admon,PUser")]
+        
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetUsers()
         {
-            if(!validateToken(Request.Headers["Authorization"])){
+            /*if(!validateToken(Request.Headers["Authorization"])){
                 return BadRequest("The Token is Expired");
-            }
+            }*/
             var listUsers = _userRep.GetUsers();
             var listUsersSummary = new List<UserSumarryDto>();
             foreach (var user in listUsers)
             {
                 var userResult = _mapper.Map<UserSumarryDto>(user);
-                userResult.LocationResidence = user.LocationResidence.City;
                 userResult.Role = user.Role_User.NameRole;
                 _apiAnswer.Result = userResult;
                 listUsersSummary.Add(userResult);
@@ -56,7 +55,7 @@ namespace HomeHero_API.Controllers
         {
             var user = _userRep.GetUser(UserID);
             var userResult = _mapper.Map<UserSumarryDto>(user);
-                userResult.LocationResidence = user.LocationResidence.City;
+                userResult.LocationResidenceID = user.LocationResidence.CityID;
                 userResult.Role = user.Role_User.NameRole;
                 return Ok(userResult);
         }
@@ -70,7 +69,6 @@ namespace HomeHero_API.Controllers
         {
             var user = _userRep.GetUser(email);
             var userResult = _mapper.Map<UserSumarryDto>(user);
-            userResult.LocationResidence = user.LocationResidence.City;
             userResult.Role = user.Role_User.NameRole;
             return Ok(userResult);
         }
@@ -79,6 +77,7 @@ namespace HomeHero_API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Register([FromBody] UserRegisterDto newUser)
         {
@@ -86,10 +85,10 @@ namespace HomeHero_API.Controllers
 
             if (_userRep.existUser(newUser.Email))
             {
-                _apiAnswer.StatusCode = HttpStatusCode.BadRequest;
+                _apiAnswer.StatusCode = HttpStatusCode.Conflict;
                 _apiAnswer.isSuccess = false;
                 _apiAnswer.Messages.Add("That email is already registered in an account");
-                return BadRequest(_apiAnswer);
+                return Conflict(_apiAnswer);
             }
 
             var user = await _userRep.Register(newUser);
@@ -103,7 +102,7 @@ namespace HomeHero_API.Controllers
             _apiAnswer.StatusCode = HttpStatusCode.OK;
             _apiAnswer.isSuccess = true;
             var userResult = _mapper.Map<UserSumarryDto>(user);
-            userResult.LocationResidence = user.LocationResidence.City;
+            userResult.LocationResidenceID = user.LocationResidence.CityID;
             userResult.Role = user.Role_User.NameRole;
             _apiAnswer.Result = userResult;
             return Ok(_apiAnswer);
@@ -139,7 +138,6 @@ namespace HomeHero_API.Controllers
             _apiAnswer.isSuccess = true;
             _apiAnswer.Messages.Add("Succesful Update!");
             var userResult = _mapper.Map<UserSumarryDto>(user);
-            userResult.LocationResidence = user.LocationResidence.City;
             userResult.Role = user.Role_User.NameRole;
             _apiAnswer.Result = userResult;
             return Ok(_apiAnswer);
@@ -158,10 +156,10 @@ namespace HomeHero_API.Controllers
 
             if (!existUser)
             {
-                _apiAnswer.StatusCode = HttpStatusCode.BadRequest;
+                _apiAnswer.StatusCode = HttpStatusCode.Conflict;
                 _apiAnswer.isSuccess = false;
                 _apiAnswer.Messages.Add("Any User is registered with the passed email");
-                return BadRequest(_apiAnswer);
+                return Conflict(_apiAnswer);
             }
 
             if (!_userRep.DeleteUser(email))
@@ -199,7 +197,6 @@ namespace HomeHero_API.Controllers
             var user = (User)loginAnswer.User;
             var userSummary = _mapper.Map<UserSumarryDto>(user);
             userSummary.Role = user.Role_User.NameRole;
-            userSummary.LocationResidence = user.LocationResidence.City;
             loginAnswer.User = userSummary;
             _apiAnswer.Result = loginAnswer;
             return Ok(_apiAnswer);

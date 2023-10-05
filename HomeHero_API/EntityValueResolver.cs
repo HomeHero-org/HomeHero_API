@@ -30,7 +30,7 @@ namespace HomeHero_API
 
         public string Resolve(Request source, RequestDto destination, string destMember, ResolutionContext context)
         {
-            return _context.Location.FirstOrDefault(ls => ls.LocationID == source.LocationServiceID)?.City;
+            return "A";
         }
     }
 

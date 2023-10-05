@@ -9,7 +9,7 @@ namespace HomeHero_API.Models.Dto.UserDto
         public string SurnamesUser { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public string LocationResidence { get; set; }
+        public int LocationResidenceID { get; set; }
         public string Role { get; set; }
     }
 }

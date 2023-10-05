@@ -94,6 +94,15 @@ namespace HomeHero_API.Repository
         public async Task<User> Register(UserRegisterDto userRegisterDto)
         {
             string hashedPassword = HashPassword(userRegisterDto.Password);
+            var location = _context.Location.Add(
+                    new Location
+                    {
+                        CityID = userRegisterDto.CityID
+                    }
+                );
+            _context.SaveChanges();
+            int idLoc = _context.Location.OrderByDescending(l => l.LocationID).FirstOrDefault().LocationID; 
+
             var newUser = new User()
             {
                 RoleID_User = userRegisterDto.RoleID_User,
@@ -101,7 +110,7 @@ namespace HomeHero_API.Repository
                 NamesUser = userRegisterDto.NamesUser,
                 SurnamesUser = userRegisterDto.SurnamesUser,
                 Password = hashedPassword,
-                LocationResidenceID = userRegisterDto.LocationResidenceID
+                LocationResidenceID = idLoc
             };
             _context.User.Add(newUser);
             await _context.SaveChangesAsync();

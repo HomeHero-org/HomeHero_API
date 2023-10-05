@@ -55,15 +55,6 @@ public class DatabaseInitializer
                 new State { NameState = "Terminado" }
             );
         }
-        if (!_context.Location.Any())
-        {
-            _context.Location.AddRange(
-                new Location { City = "Facatativa" },
-                new Location { City = "San Juan" },
-                new Location { City = "Bogota" },
-                new Location { City = "Madrid" }
-            );
-        }
         if (!_context.Area.Any())
         {
             _context.Area.AddRange(
@@ -72,15 +63,6 @@ public class DatabaseInitializer
                 new Area { NameArea = "Mascotas" },
                 new Area { NameArea = "Medicina" },
                 new Area { NameArea = "Construccion" }
-            );
-        }
-        if (!_context.Location.Any())
-        {
-            _context.Location.AddRange(
-                new Location { City = "Facatativa" },
-                new Location { City = "San Juan" },
-                new Location { City = "Bogota" },
-                new Location { City = "Madrid" }
             );
         }
         if (!_context.User.Any())
