@@ -20,7 +20,6 @@ namespace HomeHero_API
             CreateMap<Request, RequestDto>()
             .ForMember(dto => dto.RequestPicture, opt => opt.MapFrom(req => Convert.ToBase64String(req.RequestPicture)))
             .ForMember(dto => dto.RequestArea, opt => opt.MapFrom<RequestAreaResolver>())
-            .ForMember(dto => dto.RequestLocation, opt => opt.MapFrom<RequestLocationResolver>())
             .ReverseMap()
             .ForMember(req => req.RequestPicture, opt => opt.MapFrom(dto => Convert.FromBase64String(dto.RequestPicture)));
             CreateMap<RequestCreateDto, Request>()

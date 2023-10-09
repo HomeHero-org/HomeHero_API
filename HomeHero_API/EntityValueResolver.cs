@@ -19,21 +19,4 @@ namespace HomeHero_API
             return _context.Area.FirstOrDefault(a => a.AreaID == source.AreaID_Request)?.NameArea;
         }
     }
-    public class RequestLocationResolver : IValueResolver<Request, RequestDto, string>
-    {
-        private readonly ApplicationDbContext _context;
-
-        public RequestLocationResolver(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-        public string Resolve(Request source, RequestDto destination, string destMember, ResolutionContext context)
-        {
-            return "A";
-        }
-    }
-
-
-
 }

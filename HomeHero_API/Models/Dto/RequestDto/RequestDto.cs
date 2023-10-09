@@ -22,6 +22,5 @@ namespace HomeHero_API.Models.Dto.RequestDto
         public string RequestTitle { get; set; }
         //Names
         public string RequestArea { get; set; }
-        public string RequestLocation { get; set; }
     }
 }

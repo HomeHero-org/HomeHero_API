@@ -94,6 +94,9 @@ namespace HomeHero_API.Controllers
                 if (!ModelState.IsValid) return BadRequest(ModelState);
                 if (createDto == null) return BadRequest(createDto);
 
+                int idLocation = _requestRepo.CreateLocation(createDto.LocationServiceID);
+                createDto.LocationServiceID = idLocation;
+
                 Request model = _mapper.Map<Request>(createDto);
                 model.CreatedTime = DateTime.Now;
                 model.UpdateTime = DateTime.Now;
@@ -110,7 +113,7 @@ namespace HomeHero_API.Controllers
 
                 _response.Result = model;
                 _response.statusCode = HttpStatusCode.Created;
-                return CreatedAtRoute("GetRequest", new { model.RequestID }, _response);
+                return CreatedAtRoute("GetRequest", new { id = model.RequestID }, _response);
             }
             catch (Exception ex)
             {

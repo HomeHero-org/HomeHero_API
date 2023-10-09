@@ -73,8 +73,8 @@ namespace HomeHero_API.Repository
             {
                 Subject = new ClaimsIdentity(new Claim[]
                     {
-                new Claim(ClaimTypes.Name, user.Email.ToString()),
-                new Claim(ClaimTypes.Role, user.Role_User.NameRole.ToString())
+                        new Claim(ClaimTypes.Name, user.Email.ToString()),
+                        new Claim(ClaimTypes.Role, user.Role_User.CodeRole.ToString())
                     }
                 ),
                 Expires = DateTime.UtcNow.AddMinutes(1),
@@ -101,7 +101,7 @@ namespace HomeHero_API.Repository
                     }
                 );
             _context.SaveChanges();
-            int idLoc = _context.Location.OrderByDescending(l => l.LocationID).FirstOrDefault().LocationID; 
+            int idLoc = _context.Location.OrderByDescending(l => l.LocationID).FirstOrDefault().LocationID;
 
             var newUser = new User()
             {

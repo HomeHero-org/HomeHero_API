@@ -8,6 +8,7 @@ namespace HomeHero_API.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int RoleID { get; set; }
+        public int CodeRole { get; set; }
         public string NameRole { get; set; }
         public virtual ICollection<User> Users { get; set;}
     }

@@ -4,6 +4,7 @@ using HomeHero_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HomeHero_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231008014439_addignCodeRoleToRoleModel")]
+    partial class addignCodeRoleToRoleModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,7 +48,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasIndex("UserID_Application");
 
-                    b.ToTable("Application", (string)null);
+                    b.ToTable("Application");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Aptitude", b =>
@@ -66,7 +69,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasKey("AptitudeID");
 
-                    b.ToTable("Aptitude", (string)null);
+                    b.ToTable("Aptitude");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Aptitude_User", b =>
@@ -89,7 +92,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasIndex("UserID_Aptitude_User");
 
-                    b.ToTable("Aptitude_User", (string)null);
+                    b.ToTable("Aptitude_User");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Area", b =>
@@ -106,7 +109,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasKey("AreaID");
 
-                    b.ToTable("Area", (string)null);
+                    b.ToTable("Area");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.AttentionRequest", b =>
@@ -145,7 +148,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasIndex("RequestID_AttentionRequest");
 
-                    b.ToTable("AttentionRequest", (string)null);
+                    b.ToTable("AttentionRequest");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Chat", b =>
@@ -166,7 +169,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasIndex("RequestID_Chat");
 
-                    b.ToTable("Chat", (string)null);
+                    b.ToTable("Chat");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Complaint", b =>
@@ -207,7 +210,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasIndex("UnsatisfiedUserID");
 
-                    b.ToTable("Complaint", (string)null);
+                    b.ToTable("Complaint");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Contact", b =>
@@ -229,7 +232,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasIndex("UserID_Contact");
 
-                    b.ToTable("Contact", (string)null);
+                    b.ToTable("Contact");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Doubt", b =>
@@ -266,7 +269,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasIndex("ResponderID");
 
-                    b.ToTable("Doubt", (string)null);
+                    b.ToTable("Doubt");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Location", b =>
@@ -285,7 +288,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasKey("LocationID");
 
-                    b.ToTable("Location", (string)null);
+                    b.ToTable("Location");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Message", b =>
@@ -315,7 +318,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasIndex("UserChatID");
 
-                    b.ToTable("Message", (string)null);
+                    b.ToTable("Message");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.PayMethod", b =>
@@ -332,7 +335,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasKey("PMethodID");
 
-                    b.ToTable("PayMethod", (string)null);
+                    b.ToTable("PayMethod");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.PaymentRecord", b =>
@@ -362,7 +365,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasIndex("PMethodID_PaymentRecord");
 
-                    b.ToTable("PaymentRecord", (string)null);
+                    b.ToTable("PaymentRecord");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Qualification", b =>
@@ -397,7 +400,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasIndex("RequestID_Qualification");
 
-                    b.ToTable("Qualification", (string)null);
+                    b.ToTable("Qualification");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Request", b =>
@@ -454,7 +457,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasIndex("UserId_Request");
 
-                    b.ToTable("Request", (string)null);
+                    b.ToTable("Request");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Request_Area", b =>
@@ -477,7 +480,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasIndex("RequestID_Request");
 
-                    b.ToTable("Request_Area", (string)null);
+                    b.ToTable("Request_Area");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Role", b =>
@@ -497,7 +500,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasKey("RoleID");
 
-                    b.ToTable("Role", (string)null);
+                    b.ToTable("Role");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.State", b =>
@@ -514,7 +517,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasKey("StateID");
 
-                    b.ToTable("State", (string)null);
+                    b.ToTable("State");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Tutorial", b =>
@@ -543,7 +546,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasIndex("CreatorID");
 
-                    b.ToTable("Tutorial", (string)null);
+                    b.ToTable("Tutorial");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.User", b =>
@@ -609,7 +612,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasIndex("RoleID_User");
 
-                    b.ToTable("User", (string)null);
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Application", b =>

@@ -37,11 +37,11 @@ public class DatabaseInitializer
         if (!_context.Role.Any())
         {
             _context.Role.AddRange(
-                new Role {  NameRole = "Admon" },
-                new Role {  NameRole = "User" },
-                new Role {  NameRole = "PUser" },
-                new Role {  NameRole = "Reviewer" },
-                new Role {  NameRole = "TSupport" }
+                new Role {  CodeRole = 2001, NameRole = "Admon" },
+                new Role {  CodeRole = 1017, NameRole = "User" },
+                new Role {  CodeRole = 7071, NameRole = "PUser" },
+                new Role {  CodeRole = 2051, NameRole = "Reviewer" },
+                new Role {  CodeRole = 2023, NameRole = "TSupport" }
             );
         }
         if (!_context.State.Any())
@@ -65,6 +65,14 @@ public class DatabaseInitializer
                 new Area { NameArea = "Construccion" }
             );
         }
+        if (!_context.Location.Any())
+        {
+            _context.Location.AddRange(
+                    new Location { CityID = 321},
+                    new Location { CityID = 640}
+            );
+        }
+
         if (!_context.User.Any())
         {
             _context.User.AddRange(
