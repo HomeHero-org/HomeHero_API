@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers(options =>
 {
-    options.CacheProfiles.Add("DefaultCache", new CacheProfile { Duration = 30});
+    options.CacheProfiles.Add("DefaultCache", new CacheProfile { Duration = 30 });
 }).AddNewtonsoftJson(); ;
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -77,6 +77,7 @@ builder.Services.AddAuthentication(options =>
         x.SaveToken = true;
         x.TokenValidationParameters = new TokenValidationParameters
         {
+            ClockSkew = TimeSpan.Zero,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
             ValidateLifetime = true,
@@ -91,7 +92,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowReactApp",
         builder =>
         {
-            builder.WithOrigins("http://localhost:3000") // URL de tu aplicación React
+            builder.WithOrigins(
+                "http://localhost:3000",
+                "https://b244-161-18-128-38.ngrok-free.app"
+                )
                    .AllowAnyHeader()
                    .AllowAnyMethod()
                    .AllowCredentials();
@@ -99,12 +103,12 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
-using (var scope = app.Services.CreateScope())
+/*using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var initializer = services.GetRequiredService<DatabaseInitializer>();
     await initializer.InitializeAsync();
-}
+}*/
 
 app.UseCors("AllowReactApp"); // Esto debe estar antes de UseRouting()
 app.UseRouting();

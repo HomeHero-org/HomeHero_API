@@ -2,6 +2,7 @@
 using HomeHero_API.Models;
 using HomeHero_API.Models.Dto.RequestDto;
 using HomeHero_API.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -25,6 +26,7 @@ namespace HomeHero_API.Controllers
             _response = new();
         }
 
+        [Authorize(Roles = "1017,2001")]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<APIResponse>> GetRequests()
@@ -111,8 +113,8 @@ namespace HomeHero_API.Controllers
 
                 await _requestRepo.Create(model);
 
-                _response.Result = model;
                 _response.statusCode = HttpStatusCode.Created;
+                _response.Result = _mapper.Map<RequestDto>(model);
                 return CreatedAtRoute("GetRequest", new { id = model.RequestID }, _response);
             }
             catch (Exception ex)

@@ -1,5 +1,6 @@
 ﻿using HomeHero_API.Models;
 using HomeHero_API.Models.Dto.UserDto;
+using System.Security.Claims;
 
 namespace HomeHero_API.Repository.IRepository
 {
@@ -13,6 +14,7 @@ namespace HomeHero_API.Repository.IRepository
         Task<User> Register(UserRegisterDto userRegisterDto);
         bool DeleteUser (string email);
         Task<User> UpdateUser (UserUpdateDto userUpdateDto);
-
+        string CreateToken(string email, string codeRole);
+        ClaimsPrincipal validateCookie(string? m3JCookie);
     }
 }

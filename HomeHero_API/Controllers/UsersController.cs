@@ -6,8 +6,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+using System.Security.Claims;
 
 namespace HomeHero_API.Controllers
 {
@@ -18,13 +21,14 @@ namespace HomeHero_API.Controllers
         private readonly IUserRepository _userRep;
         private readonly IMapper _mapper;
         private ApiAnswer _apiAnswer;
-        public UsersController(IUserRepository userRepository, IMapper mapper) {
+        public UsersController(IUserRepository userRepository, IMapper mapper)
+        {
             _mapper = mapper;
             _userRep = userRepository;
             _apiAnswer = new ApiAnswer();
         }
 
-        
+
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -55,9 +59,9 @@ namespace HomeHero_API.Controllers
         {
             var user = _userRep.GetUser(UserID);
             var userResult = _mapper.Map<UserSumarryDto>(user);
-                userResult.LocationResidenceID = user.LocationResidence.CityID;
-                userResult.Role = user.Role_User.NameRole;
-                return Ok(userResult);
+            userResult.LocationResidenceID = user.LocationResidence.CityID;
+            userResult.Role = user.Role_User.NameRole;
+            return Ok(userResult);
         }
 
         [HttpGet("{email}", Name = "GetUserByEmail")]
@@ -142,7 +146,7 @@ namespace HomeHero_API.Controllers
             _apiAnswer.Result = userResult;
             return Ok(_apiAnswer);
         }
-        
+
         [HttpDelete("delete/{email}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -172,7 +176,7 @@ namespace HomeHero_API.Controllers
 
             _apiAnswer.StatusCode = HttpStatusCode.OK;
             _apiAnswer.isSuccess = true;
-            _apiAnswer.Messages.Add("Succesful deleted the user registered with email -> "+ email);
+            _apiAnswer.Messages.Add("Succesful deleted the user registered with email -> " + email);
             return Ok(_apiAnswer);
         }
 
@@ -192,6 +196,15 @@ namespace HomeHero_API.Controllers
                 _apiAnswer.Messages.Add("Incorrect username or password");
                 return BadRequest(_apiAnswer);
             }
+            CookieOptions cookieOptions = new CookieOptions
+            {
+                Path = "/",
+                HttpOnly = true, // Para que solo sea accesible desde el servidor
+                Secure = false,  // Secure = true es para HTTPS
+                MaxAge = TimeSpan.FromMinutes(1),
+            };
+            Response.Cookies.Append("M4J", loginAnswer.Token, cookieOptions);
+
             _apiAnswer.StatusCode = HttpStatusCode.OK;
             _apiAnswer.isSuccess = true;
             var user = (User)loginAnswer.User;
@@ -201,6 +214,26 @@ namespace HomeHero_API.Controllers
             _apiAnswer.Result = loginAnswer;
             return Ok(_apiAnswer);
         }
+
+        [HttpGet("refresh")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Refresh()
+        {
+            if (Request.Cookies.ContainsKey("M4J"))
+            {
+                string M3JCookie = Request.Cookies["M4J"];
+                ClaimsPrincipal claims = _userRep.validateCookie(M3JCookie);
+                string refreshedToken = _userRep.CreateToken(claims.FindFirst(ClaimTypes.Name).Value,claims.FindFirst(ClaimTypes.Role).Value);
+                return Ok(new { accessToken = refreshedToken});
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
 
         private bool validateToken(String authorization)
         {

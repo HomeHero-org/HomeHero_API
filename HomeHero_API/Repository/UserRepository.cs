@@ -66,6 +66,16 @@ namespace HomeHero_API.Repository
                 return new UserLoginResponseDto() { Token = "", User = null };
             }
 
+            UserLoginResponseDto userLoginResponseDto = new UserLoginResponseDto()
+            {
+                User = user,
+                Token = CreateToken(user.Email, user.Role_User.CodeRole.ToString())
+            };
+            return userLoginResponseDto;
+        }
+
+        public string CreateToken(string email, string codeRole)
+        {
             var tokenManager = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_key);
 
@@ -73,22 +83,16 @@ namespace HomeHero_API.Repository
             {
                 Subject = new ClaimsIdentity(new Claim[]
                     {
-                        new Claim(ClaimTypes.Name, user.Email.ToString()),
-                        new Claim(ClaimTypes.Role, user.Role_User.CodeRole.ToString())
+                        new Claim(ClaimTypes.Name, email.ToString()),
+                        new Claim(ClaimTypes.Role, codeRole.ToString())
                     }
                 ),
-                Expires = DateTime.UtcNow.AddMinutes(1),
+                Expires = DateTime.UtcNow.AddSeconds(30),
                 SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
             };
 
             var token = tokenManager.CreateToken(tokenDescriptor);
-
-            UserLoginResponseDto userLoginResponseDto = new UserLoginResponseDto()
-            {
-                User = user,
-                Token = tokenManager.WriteToken(token)
-            };
-            return userLoginResponseDto;
+            return tokenManager.WriteToken(token);
         }
 
         public async Task<User> Register(UserRegisterDto userRegisterDto)
@@ -184,6 +188,31 @@ namespace HomeHero_API.Repository
         public bool VerifyPassword(string password, string hashedPassword)
         {
             return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
+        }
+
+        public ClaimsPrincipal validateCookie(string? m3JCookie)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_key);
+
+            try
+            {
+                SecurityToken validatedToken;
+                var tokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = false,
+                };
+                var principal = tokenHandler.ValidateToken(m3JCookie, tokenValidationParameters, out validatedToken);
+                return principal;
+            }
+            catch (SecurityTokenException ex)
+            {
+                return null;
+            }
         }
     }
 }

@@ -22,6 +22,7 @@ namespace HomeHero_API
             .ForMember(dto => dto.RequestArea, opt => opt.MapFrom<RequestAreaResolver>())
             .ReverseMap()
             .ForMember(req => req.RequestPicture, opt => opt.MapFrom(dto => Convert.FromBase64String(dto.RequestPicture)));
+            
             CreateMap<RequestCreateDto, Request>()
              .ForMember(dest => dest.RequestPicture, opt => opt.MapFrom(src => ConvertFormFileToByteArray(src.RequestPicture)))
              .ReverseMap();

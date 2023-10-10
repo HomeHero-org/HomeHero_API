@@ -8,23 +8,20 @@ namespace HomeHero_API.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int RequestID { get; set; }
-
-        [ForeignKey("LocationServiceID")]
         public int LocationServiceID { get; set; }
+        [ForeignKey("LocationServiceID")]
         public virtual Location Location_Request { get; set; }
-
-        [ForeignKey("UserId_Request")]
         public int UserId_Request { get; set; }
+        [ForeignKey("UserId_Request")]
         public virtual User UserRequest { get; set; }
         public string RequestContent { get; set; }
-        public DateTime PublicationReqDate { get; set; } 
-
-        [ForeignKey("ReqStateID_Request")]
+        public DateTime PublicationReqDate { get; set; }       
         public int ReqStateID_Request { get; set; }
+        [ForeignKey("ReqStateID_Request")]
         public virtual State RequestState { get; set; }
 
-        [ForeignKey("AreaID_Request")]
         public int AreaID_Request { get; set; }
+        [ForeignKey("AreaID_Request")]
         public virtual Area AreaOfRequest { get; set; }
 
         public int MembersNeeded { get; set; }
