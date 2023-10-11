@@ -3,6 +3,7 @@ using HomeHero_API.Models;
 using HomeHero_API.Models.Dto.UserDto;
 using HomeHero_API.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
@@ -189,22 +190,20 @@ namespace HomeHero_API.Controllers
         {
             var loginAnswer = await _userRep.Login(userLogin);
 
-            if (loginAnswer == null || string.IsNullOrEmpty(loginAnswer.Token) || string.IsNullOrEmpty(loginAnswer.RefresherToken))
+            if (loginAnswer == null || string.IsNullOrEmpty(loginAnswer.Token))
             {
                 _apiAnswer.StatusCode = HttpStatusCode.BadRequest;
                 _apiAnswer.isSuccess = false;
                 _apiAnswer.Messages.Add("Incorrect username or password");
                 return BadRequest(_apiAnswer);
             }
-            CookieOptions cookieOptions = new CookieOptions
-            {
-                Path = "/",
-                HttpOnly = true, // Para que solo sea accesible desde el servidor
-                Secure = true,  // Secure = true es para HTTPS
-                MaxAge = TimeSpan.FromHours(12),
-                SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None,
-            };
-            Response.Cookies.Append("M3J", loginAnswer.Token, cookieOptions);
+            var timeExpiration = TimeSpan.Zero;
+            if (userLogin.RememberLogin) {
+                timeExpiration = TimeSpan.FromDays(7);    
+            }
+            else {
+                timeExpiration = TimeSpan.FromHours(20);
+            }
 
             _apiAnswer.StatusCode = HttpStatusCode.OK;
             _apiAnswer.isSuccess = true;
@@ -213,6 +212,17 @@ namespace HomeHero_API.Controllers
             userSummary.Role = user.Role_User.NameRole;
             loginAnswer.User = userSummary;
             _apiAnswer.Result = loginAnswer;
+
+            string refreshToken = _userRep.CreateRefreshToken(user.Email, user.Role_User.CodeRole.ToString(),timeExpiration);
+            CookieOptions cookieOptions = new CookieOptions
+            {
+                Path = "/",
+                HttpOnly = true, // Para que solo sea accesible desde el servidor
+                Secure = true,  // Secure = true es para HTTPS
+                MaxAge = timeExpiration,
+                SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None,
+            };
+            Response.Cookies.Append("M3J", refreshToken, cookieOptions);
             return Ok(_apiAnswer);
         }
 
@@ -228,21 +238,33 @@ namespace HomeHero_API.Controllers
                 ClaimsPrincipal claims = _userRep.validateCookie(M3JCookie);
                 string refreshedToken = _userRep.CreateToken(claims.FindFirst(ClaimTypes.Name).Value,claims.FindFirst(ClaimTypes.Role).Value);
 
-                CookieOptions cookieOptions = new CookieOptions
-                {
-                    Path = "/",
-                    HttpOnly = true, // Para que solo sea accesible desde el servidor
-                    Secure = true,  // Secure = true es para HTTPS
-                    MaxAge = TimeSpan.FromHours(12),
-                    SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None,
-                };
-                Response.Cookies.Append("M3J", M3JCookie, cookieOptions);
-
                 return Ok(new { accessToken = refreshedToken});
             }
             else
             {
                 return BadRequest();
+            }
+        }
+
+        [HttpDelete("logout")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> logout()
+        {
+            if (Request.Cookies.ContainsKey("M3J"))
+            {
+
+                Response.Cookies.Delete("M3J",new CookieOptions {
+                    HttpOnly = true, // Para que solo sea accesible desde el servidor
+                    Secure = true,  // Secure = true es para HTTPS
+                    SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None,
+                });
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest("There is not a user to logout");
             }
         }
 

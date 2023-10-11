@@ -5,10 +5,10 @@ namespace HomeHero_API.Models.Dto.UserDto
 {
     public class UserRegisterDto
     {
-        [Required, MinLength(8), StringLength(100)]
+        [Required, MinLength(3), StringLength(100)]
         public string NamesUser { get; set; }
 
-        [Required, MinLength(8), StringLength(100)]
+        [Required, MinLength(3), StringLength(100)]
         public string SurnamesUser { get; set; }
         [Required]
         public string Email { get; set; }

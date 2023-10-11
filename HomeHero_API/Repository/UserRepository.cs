@@ -70,7 +70,6 @@ namespace HomeHero_API.Repository
             {
                 User = user,
                 Token = CreateToken(user.Email, user.Role_User.CodeRole.ToString()),
-                RefresherToken = CreateRefreshToken(user.Email, user.Role_User.CodeRole.ToString())
             };
             return userLoginResponseDto;
         }
@@ -95,7 +94,7 @@ namespace HomeHero_API.Repository
             var token = tokenManager.CreateToken(tokenDescriptor);
             return tokenManager.WriteToken(token);
         }
-        public string CreateRefreshToken(string email, string codeRole)
+        public string CreateRefreshToken(string email, string codeRole, TimeSpan timeExpiration)
         {
             var tokenManager = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_key);
@@ -108,7 +107,7 @@ namespace HomeHero_API.Repository
                         new Claim(ClaimTypes.Role, codeRole.ToString())
                     }
                 ),
-                Expires = DateTime.UtcNow.AddMinutes(15),
+                Expires = DateTime.UtcNow.Add(timeExpiration),
                 SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
             };
 

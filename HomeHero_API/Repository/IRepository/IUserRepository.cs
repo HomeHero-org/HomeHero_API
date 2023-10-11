@@ -15,6 +15,7 @@ namespace HomeHero_API.Repository.IRepository
         bool DeleteUser (string email);
         Task<User> UpdateUser (UserUpdateDto userUpdateDto);
         string CreateToken(string email, string codeRole);
+        string CreateRefreshToken(string email, string codeRole, TimeSpan timeExpiration);
         ClaimsPrincipal validateCookie(string? m3JCookie);
     }
 }
