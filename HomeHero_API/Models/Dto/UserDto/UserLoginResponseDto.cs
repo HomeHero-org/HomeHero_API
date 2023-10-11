@@ -4,5 +4,7 @@
     {
         public Object User { get; set; }
         public string Token { get; set; }
+
+        public string? RefresherToken {  get; set; }
     }
 }

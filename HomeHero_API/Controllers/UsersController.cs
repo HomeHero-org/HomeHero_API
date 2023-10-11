@@ -189,7 +189,7 @@ namespace HomeHero_API.Controllers
         {
             var loginAnswer = await _userRep.Login(userLogin);
 
-            if (loginAnswer == null || string.IsNullOrEmpty(loginAnswer.Token))
+            if (loginAnswer == null || string.IsNullOrEmpty(loginAnswer.Token) || string.IsNullOrEmpty(loginAnswer.RefresherToken))
             {
                 _apiAnswer.StatusCode = HttpStatusCode.BadRequest;
                 _apiAnswer.isSuccess = false;
@@ -200,10 +200,11 @@ namespace HomeHero_API.Controllers
             {
                 Path = "/",
                 HttpOnly = true, // Para que solo sea accesible desde el servidor
-                Secure = false,  // Secure = true es para HTTPS
-                MaxAge = TimeSpan.FromMinutes(1),
+                Secure = true,  // Secure = true es para HTTPS
+                MaxAge = TimeSpan.FromHours(12),
+                SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None,
             };
-            Response.Cookies.Append("M4J", loginAnswer.Token, cookieOptions);
+            Response.Cookies.Append("M3J", loginAnswer.Token, cookieOptions);
 
             _apiAnswer.StatusCode = HttpStatusCode.OK;
             _apiAnswer.isSuccess = true;
@@ -221,11 +222,22 @@ namespace HomeHero_API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Refresh()
         {
-            if (Request.Cookies.ContainsKey("M4J"))
+            if (Request.Cookies.ContainsKey("M3J"))
             {
-                string M3JCookie = Request.Cookies["M4J"];
+                string M3JCookie = Request.Cookies["M3J"];
                 ClaimsPrincipal claims = _userRep.validateCookie(M3JCookie);
                 string refreshedToken = _userRep.CreateToken(claims.FindFirst(ClaimTypes.Name).Value,claims.FindFirst(ClaimTypes.Role).Value);
+
+                CookieOptions cookieOptions = new CookieOptions
+                {
+                    Path = "/",
+                    HttpOnly = true, // Para que solo sea accesible desde el servidor
+                    Secure = true,  // Secure = true es para HTTPS
+                    MaxAge = TimeSpan.FromHours(12),
+                    SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None,
+                };
+                Response.Cookies.Append("M3J", M3JCookie, cookieOptions);
+
                 return Ok(new { accessToken = refreshedToken});
             }
             else

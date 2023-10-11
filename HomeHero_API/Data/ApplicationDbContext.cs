@@ -21,13 +21,12 @@ namespace HomeHero_API.Data
         public DbSet<PaymentRecord> PaymentRecord { get; set; }
         public DbSet<PayMethod> PayMethod { get; set; }
         public DbSet<Qualification> Qualification { get; set; }
-
         public DbSet<Request> Request { get; set; }
-
         public DbSet<State> State { get; set; }
         public DbSet<Role> Role { get; set; }
         public DbSet<Tutorial> Tutorial { get; set; }
         public DbSet<User> User { get; set; }
+        public DbSet<TokenData> TokenData { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
