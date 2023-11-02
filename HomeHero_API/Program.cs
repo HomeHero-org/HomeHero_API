@@ -62,6 +62,16 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IContactRepository, ContacRepository>();
 builder.Services.AddScoped<IAreaRepository, AreaRepository>();
 builder.Services.AddScoped<IRequest_AreaRepository, Request_AreaRepository>();
+builder.Services.AddScoped<IPasswordResetRequestRepository, PasswordResetRequestRepository>();
+builder.Services.AddScoped<PasswordRecoveryService>();
+
+var emailConfig = builder.Configuration.GetSection("EmailSettings");
+builder.Services.AddTransient<IEmailService>(provider => new EmailService(
+    emailConfig["SMTPServer"],
+    int.Parse(emailConfig["SMTPPort"]),
+    emailConfig["SMTPUser"],
+    emailConfig["SMTPPass"]
+));
 
 builder.Services.AddTransient<DatabaseInitializer>();
 //Cors Config
@@ -104,12 +114,12 @@ builder.Services.AddCors(options =>
 
 
 var app = builder.Build();
-/*using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var initializer = services.GetRequiredService<DatabaseInitializer>();
-    await initializer.InitializeAsync();
-}*/
+//using (var scope = app.Services.CreateScope())
+//{
+//    var services = scope.ServiceProvider;
+//    var initializer = services.GetRequiredService<DatabaseInitializer>();
+//    await initializer.InitializeAsync();
+//}
 
 app.UseCors("AllowReactApp"); // Esto debe estar antes de UseRouting()
 app.UseRouting();

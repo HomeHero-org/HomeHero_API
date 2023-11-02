@@ -17,5 +17,6 @@ namespace HomeHero_API.Repository.IRepository
         string CreateToken(string email, string codeRole);
         string CreateRefreshToken(string email, string codeRole, TimeSpan timeExpiration);
         ClaimsPrincipal validateCookie(string? m3JCookie);
+        Task SetPassword(User user, string newPassword);
     }
 }

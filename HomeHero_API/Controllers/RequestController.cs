@@ -96,7 +96,7 @@ namespace HomeHero_API.Controllers
                 if (!ModelState.IsValid) return BadRequest(ModelState);
                 if (createDto == null) return BadRequest(createDto);
 
-                int idLocation = _requestRepo.CreateLocation(createDto.LocationServiceID);
+                int idLocation = _requestRepo.CreateLocation(createDto.LocationServiceID,createDto.LocationName);
                 createDto.LocationServiceID = idLocation;
 
                 Request model = _mapper.Map<Request>(createDto);

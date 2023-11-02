@@ -12,9 +12,9 @@ namespace HomeHero_API.Repository
             _context = context;
         }
 
-        public int CreateLocation(int locationServiceID)
+        public int CreateLocation(int locationServiceID, string nameLocation)
         {
-            _context.Location.Add(new Location { CityID = locationServiceID });
+            _context.Location.Add(new Location { CityID = locationServiceID , Address = nameLocation });
             _context.SaveChanges();
             return _context.Location.OrderByDescending(l => l.LocationID).FirstOrDefault().LocationID;
         }

@@ -2,6 +2,7 @@
 using HomeHero_API.Models;
 using HomeHero_API.Models.Dto.UserDto;
 using HomeHero_API.Repository.IRepository;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -233,6 +234,16 @@ namespace HomeHero_API.Repository
             {
                 return null;
             }
+        }
+
+        public async Task SetPassword(User user, string newPassword)
+        {
+
+            User user1 = await _context.User.FirstOrDefaultAsync(e => e.UserId == user.UserId);
+            if (user1 == null) throw new Exception("Usuario no encontrado."); ;
+            string hashedPassword = HashPassword(newPassword);
+            user1.Password = hashedPassword;
+            await _context.SaveChangesAsync();
         }
     }
 }

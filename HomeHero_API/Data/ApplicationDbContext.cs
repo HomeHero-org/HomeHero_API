@@ -27,6 +27,7 @@ namespace HomeHero_API.Data
         public DbSet<Tutorial> Tutorial { get; set; }
         public DbSet<User> User { get; set; }
         public DbSet<TokenData> TokenData { get; set; }
+        public DbSet<PasswordResetRequest> PasswordResetRequest { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
