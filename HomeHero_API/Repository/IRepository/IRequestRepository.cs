@@ -4,7 +4,7 @@ namespace HomeHero_API.Repository.IRepository
 {
     public interface IRequestRepository : IRepository<Request>
     {
-        int CreateLocation(int locationServiceID,string nameLocation);
+        int CreateLocation(int locationServiceID);
         Task<Request> Update(Request entity);
     }
 }

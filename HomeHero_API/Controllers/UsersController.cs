@@ -60,7 +60,7 @@ namespace HomeHero_API.Controllers
         {
             var user = _userRep.GetUser(UserID);
             var userResult = _mapper.Map<UserSumarryDto>(user);
-            userResult.LocationResidenceID = user.LocationResidence.CityID;
+            userResult.LocationResidenceID = user.LocationResidence.LocationID;
             userResult.Role = user.Role_User.NameRole;
             return Ok(userResult);
         }
@@ -107,7 +107,7 @@ namespace HomeHero_API.Controllers
             _apiAnswer.StatusCode = HttpStatusCode.OK;
             _apiAnswer.isSuccess = true;
             var userResult = _mapper.Map<UserSumarryDto>(user);
-            userResult.LocationResidenceID = user.LocationResidence.CityID;
+            userResult.LocationResidenceID = user.LocationResidence.LocationID;
             userResult.Role = user.Role_User.NameRole;
             _apiAnswer.Result = userResult;
             return Ok(_apiAnswer);

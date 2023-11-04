@@ -118,32 +118,48 @@ namespace HomeHero_API.Repository
 
         public async Task<User> Register(UserRegisterDto userRegisterDto)
         {
-            string hashedPassword = HashPassword(userRegisterDto.Password);
-            var location = _context.Location.Add(
-                    new Location
-                    {
-                        CityID = userRegisterDto.CityID
-                    }
-                );
-            _context.SaveChanges();
-            int idLoc = _context.Location.OrderByDescending(l => l.LocationID).FirstOrDefault().LocationID;
-
-            var newUser = new User()
+            try
             {
-                RoleID_User = userRegisterDto.RoleID_User,
-                Email = userRegisterDto.Email,
-                NamesUser = userRegisterDto.NamesUser,
-                SurnamesUser = userRegisterDto.SurnamesUser,
-                Password = hashedPassword,
-                LocationResidenceID = idLoc
-            };
-            _context.User.Add(newUser);
-            await _context.SaveChangesAsync();
-            return _context.User
-                .Include(u => u.LocationResidence)
-                .Include(u => u.Role_User)
-                .FirstOrDefault(u => u.Email.Equals(userRegisterDto.Email));
+                string hashedPassword = HashPassword(userRegisterDto.Password);
+
+                // Check if the location already exists
+                var location = _context.Location.FirstOrDefault(l => l.LocationID == userRegisterDto.CityID);
+
+                if (location == null)
+                {
+                    location = new Location
+                    {
+                        LocationID = userRegisterDto.CityID
+                    };
+
+                    _context.Location.Add(location);
+                    _context.SaveChanges();
+                }
+
+
+                var newUser = new User()
+                {
+                    RoleID_User = userRegisterDto.RoleID_User,
+                    Email = userRegisterDto.Email,
+                    NamesUser = userRegisterDto.NamesUser,
+                    SurnamesUser = userRegisterDto.SurnamesUser,
+                    Password = hashedPassword,
+                    LocationResidenceID = location.LocationID  // Directly get the ID from the location entity
+                };
+                _context.User.Add(newUser);
+                await _context.SaveChangesAsync();
+
+                return _context.User
+                    .Include(u => u.LocationResidence)
+                    .Include(u => u.Role_User)
+                    .FirstOrDefault(u => u.Email.Equals(userRegisterDto.Email));
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
+
 
         public async Task<User> UpdateUser(UserUpdateDto userUpdateDto)
         {

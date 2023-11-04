@@ -114,12 +114,13 @@ builder.Services.AddCors(options =>
 
 
 var app = builder.Build();
-//using (var scope = app.Services.CreateScope())
-//{
-//    var services = scope.ServiceProvider;
-//    var initializer = services.GetRequiredService<DatabaseInitializer>();
-//    await initializer.InitializeAsync();
-//}
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var initializer = services.GetRequiredService<DatabaseInitializer>();
+    await initializer.InitializeAsync();
+}
 
 app.UseCors("AllowReactApp"); // Esto debe estar antes de UseRouting()
 app.UseRouting();

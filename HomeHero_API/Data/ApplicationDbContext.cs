@@ -31,6 +31,10 @@ namespace HomeHero_API.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Location>()
+                .Property(l => l.LocationID)
+                .ValueGeneratedNever();
+
             modelBuilder.Entity<User>()
                .Property(p => p.QualificationUser)
                .HasDefaultValue(0);
@@ -131,7 +135,7 @@ namespace HomeHero_API.Data
             modelBuilder.Entity<Application>()
                 .Property(a => a.RequestedPrice)
                 .HasColumnType("decimal(18, 2)");
-         
+
         }
     }
 }
