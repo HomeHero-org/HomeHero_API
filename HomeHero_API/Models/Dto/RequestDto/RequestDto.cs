@@ -10,7 +10,8 @@ namespace HomeHero_API.Models.Dto.RequestDto
     {
         public int RequestID { get; set; }
         [Required]
-        public int LocationServiceID { get; set; }
+        public int LocationServiceID { get; set;}
+        public int Address { get; set; }
         [Required]
         public int UserId_Request { get; set; }
         public string RequestContent { get; set; }
@@ -22,6 +23,5 @@ namespace HomeHero_API.Models.Dto.RequestDto
         public string RequestTitle { get; set; }
         //Names
         public string RequestArea { get; set; }
-        public string RequestLocation { get; set; }
     }
 }

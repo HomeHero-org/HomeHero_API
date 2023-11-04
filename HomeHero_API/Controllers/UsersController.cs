@@ -3,11 +3,15 @@ using HomeHero_API.Models;
 using HomeHero_API.Models.Dto.UserDto;
 using HomeHero_API.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+using System.Security.Claims;
 
 namespace HomeHero_API.Controllers
 {
@@ -18,28 +22,28 @@ namespace HomeHero_API.Controllers
         private readonly IUserRepository _userRep;
         private readonly IMapper _mapper;
         private ApiAnswer _apiAnswer;
-        public UsersController(IUserRepository userRepository, IMapper mapper) {
+        public UsersController(IUserRepository userRepository, IMapper mapper)
+        {
             _mapper = mapper;
             _userRep = userRepository;
             _apiAnswer = new ApiAnswer();
         }
 
-        [Authorize(Roles = "Admon,PUser")]
+
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetUsers()
         {
-            if(!validateToken(Request.Headers["Authorization"])){
+            /*if(!validateToken(Request.Headers["Authorization"])){
                 return BadRequest("The Token is Expired");
-            }
+            }*/
             var listUsers = _userRep.GetUsers();
             var listUsersSummary = new List<UserSumarryDto>();
             foreach (var user in listUsers)
             {
                 var userResult = _mapper.Map<UserSumarryDto>(user);
-                userResult.LocationResidence = user.LocationResidence.City;
                 userResult.Role = user.Role_User.NameRole;
                 _apiAnswer.Result = userResult;
                 listUsersSummary.Add(userResult);
@@ -56,9 +60,9 @@ namespace HomeHero_API.Controllers
         {
             var user = _userRep.GetUser(UserID);
             var userResult = _mapper.Map<UserSumarryDto>(user);
-                userResult.LocationResidence = user.LocationResidence.City;
-                userResult.Role = user.Role_User.NameRole;
-                return Ok(userResult);
+            userResult.LocationResidenceID = user.LocationResidence.LocationID;
+            userResult.Role = user.Role_User.NameRole;
+            return Ok(userResult);
         }
 
         [HttpGet("{email}", Name = "GetUserByEmail")]
@@ -70,7 +74,6 @@ namespace HomeHero_API.Controllers
         {
             var user = _userRep.GetUser(email);
             var userResult = _mapper.Map<UserSumarryDto>(user);
-            userResult.LocationResidence = user.LocationResidence.City;
             userResult.Role = user.Role_User.NameRole;
             return Ok(userResult);
         }
@@ -79,6 +82,7 @@ namespace HomeHero_API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Register([FromBody] UserRegisterDto newUser)
         {
@@ -86,10 +90,10 @@ namespace HomeHero_API.Controllers
 
             if (_userRep.existUser(newUser.Email))
             {
-                _apiAnswer.StatusCode = HttpStatusCode.BadRequest;
+                _apiAnswer.StatusCode = HttpStatusCode.Conflict;
                 _apiAnswer.isSuccess = false;
                 _apiAnswer.Messages.Add("That email is already registered in an account");
-                return BadRequest(_apiAnswer);
+                return Conflict(_apiAnswer);
             }
 
             var user = await _userRep.Register(newUser);
@@ -103,7 +107,7 @@ namespace HomeHero_API.Controllers
             _apiAnswer.StatusCode = HttpStatusCode.OK;
             _apiAnswer.isSuccess = true;
             var userResult = _mapper.Map<UserSumarryDto>(user);
-            userResult.LocationResidence = user.LocationResidence.City;
+            userResult.LocationResidenceID = user.LocationResidence.LocationID;
             userResult.Role = user.Role_User.NameRole;
             _apiAnswer.Result = userResult;
             return Ok(_apiAnswer);
@@ -139,12 +143,11 @@ namespace HomeHero_API.Controllers
             _apiAnswer.isSuccess = true;
             _apiAnswer.Messages.Add("Succesful Update!");
             var userResult = _mapper.Map<UserSumarryDto>(user);
-            userResult.LocationResidence = user.LocationResidence.City;
             userResult.Role = user.Role_User.NameRole;
             _apiAnswer.Result = userResult;
             return Ok(_apiAnswer);
         }
-        
+
         [HttpDelete("delete/{email}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -158,10 +161,10 @@ namespace HomeHero_API.Controllers
 
             if (!existUser)
             {
-                _apiAnswer.StatusCode = HttpStatusCode.BadRequest;
+                _apiAnswer.StatusCode = HttpStatusCode.Conflict;
                 _apiAnswer.isSuccess = false;
                 _apiAnswer.Messages.Add("Any User is registered with the passed email");
-                return BadRequest(_apiAnswer);
+                return Conflict(_apiAnswer);
             }
 
             if (!_userRep.DeleteUser(email))
@@ -174,7 +177,7 @@ namespace HomeHero_API.Controllers
 
             _apiAnswer.StatusCode = HttpStatusCode.OK;
             _apiAnswer.isSuccess = true;
-            _apiAnswer.Messages.Add("Succesful deleted the user registered with email -> "+ email);
+            _apiAnswer.Messages.Add("Succesful deleted the user registered with email -> " + email);
             return Ok(_apiAnswer);
         }
 
@@ -194,16 +197,77 @@ namespace HomeHero_API.Controllers
                 _apiAnswer.Messages.Add("Incorrect username or password");
                 return BadRequest(_apiAnswer);
             }
+            var timeExpiration = TimeSpan.Zero;
+            if (userLogin.RememberLogin) {
+                timeExpiration = TimeSpan.FromDays(7);    
+            }
+            else {
+                timeExpiration = TimeSpan.FromHours(20);
+            }
+
             _apiAnswer.StatusCode = HttpStatusCode.OK;
             _apiAnswer.isSuccess = true;
             var user = (User)loginAnswer.User;
             var userSummary = _mapper.Map<UserSumarryDto>(user);
             userSummary.Role = user.Role_User.NameRole;
-            userSummary.LocationResidence = user.LocationResidence.City;
             loginAnswer.User = userSummary;
             _apiAnswer.Result = loginAnswer;
+
+            string refreshToken = _userRep.CreateRefreshToken(user.Email, user.Role_User.CodeRole.ToString(),timeExpiration);
+            CookieOptions cookieOptions = new CookieOptions
+            {
+                Path = "/",
+                HttpOnly = true, // Para que solo sea accesible desde el servidor
+                Secure = true,  // Secure = true es para HTTPS
+                MaxAge = timeExpiration,
+                SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None,
+            };
+            Response.Cookies.Append("M3J", refreshToken, cookieOptions);
             return Ok(_apiAnswer);
         }
+
+        [HttpGet("refresh")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Refresh()
+        {
+            if (Request.Cookies.ContainsKey("M3J"))
+            {
+                string M3JCookie = Request.Cookies["M3J"];
+                ClaimsPrincipal claims = _userRep.validateCookie(M3JCookie);
+                string refreshedToken = _userRep.CreateToken(claims.FindFirst(ClaimTypes.Name).Value,claims.FindFirst(ClaimTypes.Role).Value);
+
+                return Ok(new { accessToken = refreshedToken});
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpDelete("logout")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> logout()
+        {
+            if (Request.Cookies.ContainsKey("M3J"))
+            {
+
+                Response.Cookies.Delete("M3J",new CookieOptions {
+                    HttpOnly = true, // Para que solo sea accesible desde el servidor
+                    Secure = true,  // Secure = true es para HTTPS
+                    SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None,
+                });
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest("There is not a user to logout");
+            }
+        }
+
 
         private bool validateToken(String authorization)
         {

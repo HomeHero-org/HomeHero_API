@@ -13,6 +13,7 @@ namespace HomeHero_API.Models.Dto.RequestDto
         [Required]
         public int UserId_Request { get; set; } = 1;
         public string RequestContent { get; set; }
+        public string LocationName { get; set; }
         public DateTime PublicationReqDate { get; set; }
         [Required]
         public int ReqStateID_Request { get; set; } = 1;

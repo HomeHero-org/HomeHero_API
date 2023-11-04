@@ -4,5 +4,6 @@
     {
         public Object User { get; set; }
         public string Token { get; set; }
+
     }
 }

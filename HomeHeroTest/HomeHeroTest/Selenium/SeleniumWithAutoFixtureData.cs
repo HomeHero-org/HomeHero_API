@@ -6,6 +6,7 @@ using Xunit.Abstractions;
 using HomeHero_API.Models;
 using HomeHero_API.Models.Dto;
 using AutoFixture.AutoMoq;
+using HomeHero_API.Models.Dto.RequestDto;
 
 namespace HomeHeroTest.Selenium
 {

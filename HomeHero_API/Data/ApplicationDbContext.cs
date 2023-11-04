@@ -21,16 +21,20 @@ namespace HomeHero_API.Data
         public DbSet<PaymentRecord> PaymentRecord { get; set; }
         public DbSet<PayMethod> PayMethod { get; set; }
         public DbSet<Qualification> Qualification { get; set; }
-
         public DbSet<Request> Request { get; set; }
-
         public DbSet<State> State { get; set; }
         public DbSet<Role> Role { get; set; }
         public DbSet<Tutorial> Tutorial { get; set; }
         public DbSet<User> User { get; set; }
+        public DbSet<TokenData> TokenData { get; set; }
+        public DbSet<PasswordResetRequest> PasswordResetRequest { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Location>()
+                .Property(l => l.LocationID)
+                .ValueGeneratedNever();
+
             modelBuilder.Entity<User>()
                .Property(p => p.QualificationUser)
                .HasDefaultValue(0);
@@ -131,7 +135,7 @@ namespace HomeHero_API.Data
             modelBuilder.Entity<Application>()
                 .Property(a => a.RequestedPrice)
                 .HasColumnType("decimal(18, 2)");
-         
+
         }
     }
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HomeHero_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230912012005_ChangeModelsDates")]
-    partial class ChangeModelsDates
+    [Migration("20231031214210_AddEmailSettings")]
+    partial class AddEmailSettings
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,6 +45,8 @@ namespace HomeHero_API.Migrations
                     b.HasKey("ApplicationID");
 
                     b.HasIndex("RequestID_Application");
+
+                    b.HasIndex("UserID_Application");
 
                     b.ToTable("Application");
                 });
@@ -101,8 +103,9 @@ namespace HomeHero_API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AreaID"));
 
-                    b.Property<int>("NameArea")
-                        .HasColumnType("int");
+                    b.Property<string>("NameArea")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AreaID");
 
@@ -280,30 +283,12 @@ namespace HomeHero_API.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CityID")
+                        .HasColumnType("int");
 
                     b.HasKey("LocationID");
 
                     b.ToTable("Location");
-
-                    b.HasData(
-                        new
-                        {
-                            LocationID = 1,
-                            City = "AGUA DE DIOS"
-                        },
-                        new
-                        {
-                            LocationID = 2,
-                            City = "ALBAN"
-                        },
-                        new
-                        {
-                            LocationID = 3,
-                            City = "ANAPOIMA"
-                        });
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Message", b =>
@@ -334,6 +319,29 @@ namespace HomeHero_API.Migrations
                     b.HasIndex("UserChatID");
 
                     b.ToTable("Message");
+                });
+
+            modelBuilder.Entity("HomeHero_API.Models.PasswordResetRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PasswordResetRequest");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.PayMethod", b =>
@@ -426,6 +434,9 @@ namespace HomeHero_API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RequestID"));
 
+                    b.Property<int>("AreaID_Request")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
@@ -460,6 +471,8 @@ namespace HomeHero_API.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("RequestID");
+
+                    b.HasIndex("AreaID_Request");
 
                     b.HasIndex("LocationServiceID");
 
@@ -501,6 +514,9 @@ namespace HomeHero_API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleID"));
 
+                    b.Property<int>("CodeRole")
+                        .HasColumnType("int");
+
                     b.Property<string>("NameRole")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -508,33 +524,6 @@ namespace HomeHero_API.Migrations
                     b.HasKey("RoleID");
 
                     b.ToTable("Role");
-
-                    b.HasData(
-                        new
-                        {
-                            RoleID = 1,
-                            NameRole = "Admon"
-                        },
-                        new
-                        {
-                            RoleID = 2,
-                            NameRole = "User"
-                        },
-                        new
-                        {
-                            RoleID = 3,
-                            NameRole = "PUser"
-                        },
-                        new
-                        {
-                            RoleID = 4,
-                            NameRole = "Reviewer"
-                        },
-                        new
-                        {
-                            RoleID = 5,
-                            NameRole = "TSupport"
-                        });
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.State", b =>
@@ -552,38 +541,23 @@ namespace HomeHero_API.Migrations
                     b.HasKey("StateID");
 
                     b.ToTable("State");
+                });
 
-                    b.HasData(
-                        new
-                        {
-                            StateID = 1,
-                            NameState = "Preparado"
-                        },
-                        new
-                        {
-                            StateID = 2,
-                            NameState = "Progreso"
-                        },
-                        new
-                        {
-                            StateID = 3,
-                            NameState = "Evaluacion"
-                        },
-                        new
-                        {
-                            StateID = 4,
-                            NameState = "Pagado"
-                        },
-                        new
-                        {
-                            StateID = 5,
-                            NameState = "PagoConfirmado"
-                        },
-                        new
-                        {
-                            StateID = 6,
-                            NameState = "Terminado"
-                        });
+            modelBuilder.Entity("HomeHero_API.Models.TokenData", b =>
+                {
+                    b.Property<int>("TokenID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TokenID"));
+
+                    b.Property<string>("TokenInfo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TokenID");
+
+                    b.ToTable("TokenData");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Tutorial", b =>
@@ -637,9 +611,9 @@ namespace HomeHero_API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("Password")
+                    b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<byte[]>("ProfilePicture")
                         .HasColumnType("varbinary(max)");
@@ -656,10 +630,6 @@ namespace HomeHero_API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(2);
-
-                    b.Property<byte[]>("Salt")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("SexUser")
                         .HasColumnType("nvarchar(1)");
@@ -695,7 +665,7 @@ namespace HomeHero_API.Migrations
 
                     b.HasOne("HomeHero_API.Models.User", "User_Application")
                         .WithMany("Applications")
-                        .HasForeignKey("RequestID_Application")
+                        .HasForeignKey("UserID_Application")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -889,6 +859,12 @@ namespace HomeHero_API.Migrations
 
             modelBuilder.Entity("HomeHero_API.Models.Request", b =>
                 {
+                    b.HasOne("HomeHero_API.Models.Area", "AreaOfRequest")
+                        .WithMany("Request_Areas")
+                        .HasForeignKey("AreaID_Request")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("HomeHero_API.Models.Location", "Location_Request")
                         .WithMany("Requests")
                         .HasForeignKey("LocationServiceID")
@@ -907,6 +883,8 @@ namespace HomeHero_API.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.Navigation("AreaOfRequest");
+
                     b.Navigation("Location_Request");
 
                     b.Navigation("RequestState");
@@ -916,21 +894,21 @@ namespace HomeHero_API.Migrations
 
             modelBuilder.Entity("HomeHero_API.Models.Request_Area", b =>
                 {
-                    b.HasOne("HomeHero_API.Models.Area", "Area_Request_Area")
-                        .WithMany("Request_Areas")
+                    b.HasOne("HomeHero_API.Models.Area", "Area_RA")
+                        .WithMany()
                         .HasForeignKey("AreaID_Request")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HomeHero_API.Models.Request", "Request_Request_Area")
+                    b.HasOne("HomeHero_API.Models.Request", "Request_RA")
                         .WithMany("Request_Areas")
                         .HasForeignKey("RequestID_Request")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Area_Request_Area");
+                    b.Navigation("Area_RA");
 
-                    b.Navigation("Request_Request_Area");
+                    b.Navigation("Request_RA");
                 });
 
             modelBuilder.Entity("HomeHero_API.Models.Tutorial", b =>

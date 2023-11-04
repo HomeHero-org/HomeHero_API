@@ -11,6 +11,16 @@ namespace HomeHero_API.Repository
         {
             _context = context;
         }
+
+        public int CreateLocation(int locationServiceID)
+        {
+            var newLocation = new Location { LocationID = locationServiceID };
+            _context.Location.Add(newLocation);
+            _context.SaveChanges();
+            return newLocation.LocationID;
+        }
+
+
         public async Task<Request> Update(HomeHero_API.Models.Request entity)
         {
             entity.UpdateTime = DateTime.Now;

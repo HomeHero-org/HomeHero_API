@@ -3,12 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace HomeHero_API.Migrations
 {
     /// <inheritdoc />
-    public partial class InitProjetWithModels : Migration
+    public partial class aNewVersion : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,7 +31,7 @@ namespace HomeHero_API.Migrations
                 {
                     AreaID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    NameArea = table.Column<int>(type: "int", nullable: false)
+                    NameArea = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -46,7 +44,7 @@ namespace HomeHero_API.Migrations
                 {
                     LocationID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    City = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CityID = table.Column<int>(type: "int", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -73,6 +71,7 @@ namespace HomeHero_API.Migrations
                 {
                     RoleID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    CodeRole = table.Column<int>(type: "int", nullable: false),
                     NameRole = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -107,8 +106,7 @@ namespace HomeHero_API.Migrations
                     VolunteerVoucher = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     QualificationUser = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    Salt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LocationResidenceID = table.Column<int>(type: "int", nullable: false),
                     SexUser = table.Column<string>(type: "nvarchar(1)", nullable: true),
                     Curriculum = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
@@ -216,13 +214,21 @@ namespace HomeHero_API.Migrations
                     RequestContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PublicationReqDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ReqStateID_Request = table.Column<int>(type: "int", nullable: false),
+                    AreaID_Request = table.Column<int>(type: "int", nullable: false),
                     MembersNeeded = table.Column<int>(type: "int", nullable: false),
                     RequestPicture = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    RequestTitle = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    RequestTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Request", x => x.RequestID);
+                    table.ForeignKey(
+                        name: "FK_Request_Area_AreaID_Request",
+                        column: x => x.AreaID_Request,
+                        principalTable: "Area",
+                        principalColumn: "AreaID");
                     table.ForeignKey(
                         name: "FK_Request_Location_LocationServiceID",
                         column: x => x.LocationServiceID,
@@ -283,8 +289,8 @@ namespace HomeHero_API.Migrations
                         principalTable: "Request",
                         principalColumn: "RequestID");
                     table.ForeignKey(
-                        name: "FK_Application_User_RequestID_Application",
-                        column: x => x.RequestID_Application,
+                        name: "FK_Application_User_UserID_Application",
+                        column: x => x.UserID_Application,
                         principalTable: "User",
                         principalColumn: "UserId");
                 });
@@ -495,45 +501,15 @@ namespace HomeHero_API.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "Location",
-                columns: new[] { "LocationID", "Address", "City" },
-                values: new object[,]
-                {
-                    { 1, null, "AGUA DE DIOS" },
-                    { 2, null, "ALBAN" },
-                    { 3, null, "ANAPOIMA" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Role",
-                columns: new[] { "RoleID", "NameRole" },
-                values: new object[,]
-                {
-                    { 1, "Admon" },
-                    { 2, "User" },
-                    { 3, "PUser" },
-                    { 4, "Reviewer" },
-                    { 5, "TSupport" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "State",
-                columns: new[] { "StateID", "NameState" },
-                values: new object[,]
-                {
-                    { 1, "Preparado" },
-                    { 2, "Progreso" },
-                    { 3, "Evaluacion" },
-                    { 4, "Pagado" },
-                    { 5, "PagoConfirmado" },
-                    { 6, "Terminado" }
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_Application_RequestID_Application",
                 table: "Application",
                 column: "RequestID_Application");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Application_UserID_Application",
+                table: "Application",
+                column: "UserID_Application");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Aptitude_User_AptitudeID_Aptitude_User",
@@ -636,6 +612,11 @@ namespace HomeHero_API.Migrations
                 column: "RequestID_Qualification");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Request_AreaID_Request",
+                table: "Request",
+                column: "AreaID_Request");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Request_LocationServiceID",
                 table: "Request",
                 column: "LocationServiceID");
@@ -722,10 +703,10 @@ namespace HomeHero_API.Migrations
                 name: "PayMethod");
 
             migrationBuilder.DropTable(
-                name: "Area");
+                name: "Request");
 
             migrationBuilder.DropTable(
-                name: "Request");
+                name: "Area");
 
             migrationBuilder.DropTable(
                 name: "State");

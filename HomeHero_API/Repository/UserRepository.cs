@@ -2,6 +2,7 @@
 using HomeHero_API.Models;
 using HomeHero_API.Models.Dto.UserDto;
 using HomeHero_API.Repository.IRepository;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -66,6 +67,16 @@ namespace HomeHero_API.Repository
                 return new UserLoginResponseDto() { Token = "", User = null };
             }
 
+            UserLoginResponseDto userLoginResponseDto = new UserLoginResponseDto()
+            {
+                User = user,
+                Token = CreateToken(user.Email, user.Role_User.CodeRole.ToString()),
+            };
+            return userLoginResponseDto;
+        }
+
+        public string CreateToken(string email, string codeRole)
+        {
             var tokenManager = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_key);
 
@@ -73,8 +84,8 @@ namespace HomeHero_API.Repository
             {
                 Subject = new ClaimsIdentity(new Claim[]
                     {
-                new Claim(ClaimTypes.Name, user.Email.ToString()),
-                new Claim(ClaimTypes.Role, user.Role_User.NameRole.ToString())
+                        new Claim(ClaimTypes.Name, email.ToString()),
+                        new Claim(ClaimTypes.Role, codeRole.ToString())
                     }
                 ),
                 Expires = DateTime.UtcNow.AddMinutes(1),
@@ -82,34 +93,73 @@ namespace HomeHero_API.Repository
             };
 
             var token = tokenManager.CreateToken(tokenDescriptor);
+            return tokenManager.WriteToken(token);
+        }
+        public string CreateRefreshToken(string email, string codeRole, TimeSpan timeExpiration)
+        {
+            var tokenManager = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_key);
 
-            UserLoginResponseDto userLoginResponseDto = new UserLoginResponseDto()
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
-                User = user,
-                Token = tokenManager.WriteToken(token)
+                Subject = new ClaimsIdentity(new Claim[]
+                    {
+                        new Claim(ClaimTypes.Name, email.ToString()),
+                        new Claim(ClaimTypes.Role, codeRole.ToString())
+                    }
+                ),
+                Expires = DateTime.UtcNow.Add(timeExpiration),
+                SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
             };
-            return userLoginResponseDto;
+
+            var token = tokenManager.CreateToken(tokenDescriptor);
+            return tokenManager.WriteToken(token);
         }
 
         public async Task<User> Register(UserRegisterDto userRegisterDto)
         {
-            string hashedPassword = HashPassword(userRegisterDto.Password);
-            var newUser = new User()
+            try
             {
-                RoleID_User = userRegisterDto.RoleID_User,
-                Email = userRegisterDto.Email,
-                NamesUser = userRegisterDto.NamesUser,
-                SurnamesUser = userRegisterDto.SurnamesUser,
-                Password = hashedPassword,
-                LocationResidenceID = userRegisterDto.LocationResidenceID
-            };
-            _context.User.Add(newUser);
-            await _context.SaveChangesAsync();
-            return _context.User
-                .Include(u => u.LocationResidence)
-                .Include(u => u.Role_User)
-                .FirstOrDefault(u => u.Email.Equals(userRegisterDto.Email));
+                string hashedPassword = HashPassword(userRegisterDto.Password);
+
+                // Check if the location already exists
+                var location = _context.Location.FirstOrDefault(l => l.LocationID == userRegisterDto.CityID);
+
+                if (location == null)
+                {
+                    location = new Location
+                    {
+                        LocationID = userRegisterDto.CityID
+                    };
+
+                    _context.Location.Add(location);
+                    _context.SaveChanges();
+                }
+
+
+                var newUser = new User()
+                {
+                    RoleID_User = userRegisterDto.RoleID_User,
+                    Email = userRegisterDto.Email,
+                    NamesUser = userRegisterDto.NamesUser,
+                    SurnamesUser = userRegisterDto.SurnamesUser,
+                    Password = hashedPassword,
+                    LocationResidenceID = location.LocationID  // Directly get the ID from the location entity
+                };
+                _context.User.Add(newUser);
+                await _context.SaveChangesAsync();
+
+                return _context.User
+                    .Include(u => u.LocationResidence)
+                    .Include(u => u.Role_User)
+                    .FirstOrDefault(u => u.Email.Equals(userRegisterDto.Email));
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
+
 
         public async Task<User> UpdateUser(UserUpdateDto userUpdateDto)
         {
@@ -175,6 +225,41 @@ namespace HomeHero_API.Repository
         public bool VerifyPassword(string password, string hashedPassword)
         {
             return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
+        }
+
+        public ClaimsPrincipal validateCookie(string? m3JCookie)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_key);
+
+            try
+            {
+                SecurityToken validatedToken;
+                var tokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = false,
+                };
+                var principal = tokenHandler.ValidateToken(m3JCookie, tokenValidationParameters, out validatedToken);
+                return principal;
+            }
+            catch (SecurityTokenException ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task SetPassword(User user, string newPassword)
+        {
+
+            User user1 = await _context.User.FirstOrDefaultAsync(e => e.UserId == user.UserId);
+            if (user1 == null) throw new Exception("Usuario no encontrado."); ;
+            string hashedPassword = HashPassword(newPassword);
+            user1.Password = hashedPassword;
+            await _context.SaveChangesAsync();
         }
     }
 }
