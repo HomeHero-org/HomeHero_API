@@ -125,11 +125,8 @@ using (var scope = app.Services.CreateScope())
 app.UseCors("AllowReactApp"); // Esto debe estar antes de UseRouting()
 app.UseRouting();
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
 
 app.UseHttpsRedirection();
 

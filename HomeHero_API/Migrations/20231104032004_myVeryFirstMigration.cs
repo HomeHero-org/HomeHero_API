@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HomeHero_API.Migrations
 {
     /// <inheritdoc />
-    public partial class aNewVersion : Migration
+    public partial class myVeryFirstMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -43,13 +43,25 @@ namespace HomeHero_API.Migrations
                 columns: table => new
                 {
                     LocationID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CityID = table.Column<int>(type: "int", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Location", x => x.LocationID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PasswordResetRequest",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PasswordResetRequest", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -90,6 +102,19 @@ namespace HomeHero_API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_State", x => x.StateID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TokenData",
+                columns: table => new
+                {
+                    TokenID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TokenInfo = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TokenData", x => x.TokenID);
                 });
 
             migrationBuilder.CreateTable(
@@ -679,6 +704,9 @@ namespace HomeHero_API.Migrations
                 name: "Message");
 
             migrationBuilder.DropTable(
+                name: "PasswordResetRequest");
+
+            migrationBuilder.DropTable(
                 name: "PaymentRecord");
 
             migrationBuilder.DropTable(
@@ -686,6 +714,9 @@ namespace HomeHero_API.Migrations
 
             migrationBuilder.DropTable(
                 name: "Request_Area");
+
+            migrationBuilder.DropTable(
+                name: "TokenData");
 
             migrationBuilder.DropTable(
                 name: "Tutorial");

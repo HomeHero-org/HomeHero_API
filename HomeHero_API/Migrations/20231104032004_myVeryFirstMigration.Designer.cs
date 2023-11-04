@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HomeHero_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231103022725_locationChange")]
-    partial class locationChange
+    [Migration("20231104032004_myVeryFirstMigration")]
+    partial class myVeryFirstMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -275,10 +275,7 @@ namespace HomeHero_API.Migrations
             modelBuilder.Entity("HomeHero_API.Models.Location", b =>
                 {
                     b.Property<int>("LocationID")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LocationID"));
 
                     b.HasKey("LocationID");
 
